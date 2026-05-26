@@ -152,6 +152,212 @@
 
         .hidden { display: none !important; }
 
+        .report {
+            background: #ffffff;
+            color: #1d1d1f;
+            border-radius: 18px;
+            padding: clamp(16px, 3vw, 30px);
+            box-shadow: 0 24px 70px rgba(0,0,0,0.36);
+            border: 1px solid rgba(255,255,255,0.14);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+            align-items: flex-start;
+            border-bottom: 1px solid #d8d8dc;
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+        }
+
+        .report-title {
+            color: #111114;
+            font-size: clamp(26px, 4vw, 38px);
+            line-height: 1.05;
+            font-weight: 800;
+        }
+
+        .report-meta {
+            color: #5f6068;
+            font-size: 13px;
+            line-height: 1.35;
+            text-align: right;
+        }
+
+        .report .card {
+            background: #ffffff;
+            border: 1px solid #d8d8dc;
+            border-radius: 8px;
+            box-shadow: none;
+            color: #1d1d1f;
+        }
+
+        .report .card h2,
+        .report .card h3 {
+            color: #111114;
+        }
+
+        .report p,
+        .report .legend,
+        .report .metric small,
+        .report th,
+        .report .pill {
+            color: #5f6068;
+        }
+
+        .report .metric {
+            background: #f4f4f6;
+            border-color: #e1e1e5;
+            border-radius: 8px;
+        }
+
+        .report .pill {
+            background: #f0f0f2;
+        }
+
+        .report .chart-wrap {
+            border-color: #d8d8dc;
+            background: #f7f7f9;
+        }
+
+        .report svg {
+            background: #f7f7f9;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .info-block {
+            display: grid;
+            gap: 7px;
+            align-content: start;
+        }
+
+        .info-block h3 {
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: minmax(120px, 0.42fr) 1fr;
+            gap: 10px;
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        .info-row span:first-child {
+            color: #5f6068;
+            font-weight: 700;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 7px 18px;
+        }
+
+        .distribution-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .donut-row {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .donut {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            position: relative;
+            background: conic-gradient(var(--green) 0deg, var(--green) 120deg, var(--orange) 120deg, var(--orange) 210deg, var(--red) 210deg);
+        }
+
+        .donut::after {
+            content: "";
+            position: absolute;
+            inset: 38px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid #e1e1e5;
+        }
+
+        .boxplot {
+            min-height: 96px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .box-axis {
+            position: relative;
+            height: 34px;
+            border-bottom: 1px solid #a7a7af;
+            margin: 8px 8px 0;
+        }
+
+        .box-whisker,
+        .box-range,
+        .box-median {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .box-whisker {
+            height: 2px;
+            background: #1d1d1f;
+        }
+
+        .box-range {
+            height: 26px;
+            border: 2px solid var(--blue);
+            background: rgba(10,132,255,0.16);
+            border-radius: 4px;
+        }
+
+        .box-median {
+            width: 3px;
+            height: 30px;
+            background: var(--blue);
+            border-radius: 2px;
+        }
+
+        .note-list {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .note-chip {
+            display: inline-flex;
+            border-radius: 999px;
+            padding: 3px 7px;
+            background: #f0f0f2;
+            color: #424248;
+            font-size: 12px;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
         .scan-notice {
             border: 1px solid rgba(48,209,88,0.25);
             background: rgba(48,209,88,0.10);
@@ -306,6 +512,9 @@
             main { padding: 28px; }
             .decode-card { grid-template-columns: 1.15fr 0.85fr; align-items: end; }
             .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .info-grid { grid-template-columns: 1fr 1fr; }
+            .summary-grid { grid-template-columns: 1fr 1fr; }
+            .distribution-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -345,23 +554,51 @@
         </div>
     </section>
 
-    <section id="viewer" class="grid hidden" style="margin-top: 14px;">
+    <section id="viewer" class="report hidden" style="margin-top: 14px;">
+        <div class="report-header">
+            <div>
+                <div class="report-title" id="reportTitle">INR Protokoll</div>
+                <p id="periodTitle">Zeitraum</p>
+            </div>
+            <div class="report-meta" id="metaLine"></div>
+        </div>
+
+        <div class="grid">
         <section class="card">
-            <div class="row" style="justify-content: space-between;">
-                <div>
-                    <h2 id="periodTitle">Zeitraum</h2>
-                    <p id="metaLine"></p>
+            <div class="section-title" id="ui-patient-therapy-title">1. Patienten- und Therapiedaten</div>
+            <div class="info-grid">
+                <div class="info-block">
+                    <h3 id="ui-basic-data">Basisdaten</h3>
+                    <div id="patientInfo"></div>
                 </div>
-                <span class="pill" id="entryCount"></span>
+                <div class="info-block">
+                    <h3 id="ui-therapy-data">Therapiedaten</h3>
+                    <div id="therapyInfo"></div>
+                </div>
+                <div class="info-block" style="grid-column: 1 / -1;">
+                    <h3 id="ui-additional-medical">Weitere medizinische Angaben</h3>
+                    <div id="additionalInfo"></div>
+                </div>
             </div>
         </section>
 
-        <section class="metrics" id="metrics"></section>
+        <section class="card">
+            <div class="row" style="justify-content: space-between; margin-bottom: 10px;">
+                <div class="section-title" id="ui-summary-title" style="margin-bottom: 0;">2. Messzusammenfassung</div>
+                <span class="pill" id="entryCount"></span>
+            </div>
+            <div class="summary-grid" id="summaryRows"></div>
+        </section>
+
+        <section class="card">
+            <div class="section-title" id="ui-chart-section-title">3. Kennwerte und Diagramme</div>
+            <section class="metrics" id="metrics"></section>
+        </section>
 
         <section class="card">
             <div class="row" style="justify-content: space-between; margin-bottom: 12px;">
                 <div>
-                    <h2 id="ui-chart-title">Verlauf</h2>
+                    <h2 id="ui-chart-title">INR-Verlaufskurve</h2>
                     <p id="ui-chart-desc">Zum Verschieben seitlich über das Diagramm wischen. Punkte antippen für Details.</p>
                 </div>
             </div>
@@ -387,27 +624,45 @@
             </div>
         </section>
 
+        <section class="card">
+            <div class="section-title" id="ui-distribution-title">Verteilung und Boxplot</div>
+            <div class="distribution-grid">
+                <div class="donut-row">
+                    <div class="donut" id="distributionDonut" aria-hidden="true"></div>
+                    <div class="legend" id="distributionLegend"></div>
+                </div>
+                <div class="boxplot">
+                    <h3 id="ui-boxplot-title">INR Box Plot</h3>
+                    <div class="box-axis" id="boxAxis"></div>
+                    <p id="boxStats"></p>
+                </div>
+            </div>
+        </section>
+
         <section class="card hidden" id="detailCard">
             <h2 id="ui-detail-title">Messpunkt</h2>
             <div class="detail" id="detailContent"></div>
         </section>
 
         <section class="card">
-            <h2 id="ui-table-title" style="margin-bottom: 10px;">Messwerte</h2>
+            <div class="section-title" id="ui-table-title">4. Protokolleinträge</div>
             <div style="overflow:auto;">
                 <table>
                     <thead>
                     <tr>
                         <th id="thDate">Datum</th>
                         <th>INR</th>
+                        <th id="thTarget">Zielbereich</th>
                         <th id="thDose">Dosis</th>
                         <th id="thStatus">Status</th>
+                        <th id="thNotes">Notizen / Vorkommnisse</th>
                     </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </section>
+        </div>
     </section>
 </main>
 
@@ -426,7 +681,7 @@ const translations = {
         payloadLabel: "QR-Daten",
         payloadPlaceholder: "QR-Code scannen oder verschlüsselten Text einfügen",
         codeLabel: "Freigabecode",
-        codePlaceholder: "z. B. 12345-67890",
+        codePlaceholder: "z. B. 1234567890",
         button: "Entschlüsseln",
         reset: "Zurücksetzen",
         missing: "Bitte QR-Daten und Freigabecode eingeben.",
@@ -439,13 +694,13 @@ const translations = {
         generated: "Erstellt",
         medication: "Medikament",
         target: "Zielbereich",
-        chartTitle: "Verlauf",
+        chartTitle: "INR-Verlaufskurve",
         chartDesc: "Zum Verschieben seitlich über das Diagramm wischen. Punkte antippen für Details.",
         targetLegend: "Zielbereich",
         doseLegend: "Dosis",
         outLegend: "Außerhalb",
         detailTitle: "Messpunkt",
-        tableTitle: "Messwerte",
+        tableTitle: "4. Protokolleinträge",
         date: "Datum",
         dose: "Dosis",
         status: "Status",
@@ -453,7 +708,47 @@ const translations = {
         inTarget: "Im Ziel",
         highLow: "Abweichungen",
         doseChanges: "Dosiswechsel",
-        noValue: "-"
+        noValue: "-",
+        reportTitle: "INR Protokoll",
+        patientTherapy: "1. Patienten- und Therapiedaten",
+        basicData: "Basisdaten",
+        therapyData: "Therapiedaten",
+        additionalMedical: "Weitere medizinische Angaben",
+        name: "Name",
+        birthDate: "Geburtsdatum",
+        gender: "Geschlecht",
+        diagnosis: "Diagnose",
+        condition: "Grunderkrankung",
+        allergies: "Allergien",
+        intolerances: "Unverträglichkeiten",
+        preexisting: "Vorerkrankungen",
+        measurementSummary: "2. Messzusammenfassung",
+        chartSection: "3. Kennwerte und Diagramme",
+        lastINR: "Letzter INR",
+        averageINR: "Durchschnitt",
+        stability: "Stabilität",
+        trend: "Trend",
+        distributionTitle: "Verteilung und Boxplot",
+        boxPlot: "INR Box Plot",
+        targetStatus: "Zielbereich",
+        notes: "Notizen / Vorkommnisse",
+        low: "Unter Ziel",
+        high: "Über Ziel",
+        stable: "Stabil",
+        moderate: "Moderat",
+        unstable: "Instabil",
+        rising: "Steigend",
+        falling: "Fallend",
+        unchanged: "Stabil",
+        bleeding: "Blutung",
+        urgent: "Warnzeichen",
+        alcohol: "Alkohol",
+        vitaminK: "Vitamin K",
+        activity: "Aktivität",
+        stress: "Stress",
+        wellbeing: "Wohlbefinden",
+        supplementaryMedication: "Begleitmedikation",
+        healthEvent: "Ereignis"
     },
     en: {
         title: "INR Tracker",
@@ -468,7 +763,7 @@ const translations = {
         payloadLabel: "QR data",
         payloadPlaceholder: "Scan QR code or paste encrypted text",
         codeLabel: "Access code",
-        codePlaceholder: "e.g. 12345-67890",
+        codePlaceholder: "e.g. 1234567890",
         button: "Decrypt",
         reset: "Reset",
         missing: "Please enter QR data and access code.",
@@ -481,13 +776,13 @@ const translations = {
         generated: "Generated",
         medication: "Medication",
         target: "Target range",
-        chartTitle: "Trend",
+        chartTitle: "INR trend curve",
         chartDesc: "Swipe sideways on the chart to move. Tap points for details.",
         targetLegend: "Target range",
         doseLegend: "Dose",
         outLegend: "Out of range",
         detailTitle: "Reading",
-        tableTitle: "Readings",
+        tableTitle: "4. Log entries",
         date: "Date",
         dose: "Dose",
         status: "Status",
@@ -495,7 +790,47 @@ const translations = {
         inTarget: "In target",
         highLow: "Out of range",
         doseChanges: "Dose changes",
-        noValue: "-"
+        noValue: "-",
+        reportTitle: "INR report",
+        patientTherapy: "1. Patient and therapy data",
+        basicData: "Basic data",
+        therapyData: "Therapy data",
+        additionalMedical: "Additional medical information",
+        name: "Name",
+        birthDate: "Date of birth",
+        gender: "Gender",
+        diagnosis: "Diagnosis",
+        condition: "Underlying condition",
+        allergies: "Allergies",
+        intolerances: "Intolerances",
+        preexisting: "Pre-existing conditions",
+        measurementSummary: "2. Measurement summary",
+        chartSection: "3. Key figures and charts",
+        lastINR: "Last INR",
+        averageINR: "Average",
+        stability: "Stability",
+        trend: "Trend",
+        distributionTitle: "Distribution and box plot",
+        boxPlot: "INR box plot",
+        targetStatus: "Target range",
+        notes: "Notes / events",
+        low: "Below target",
+        high: "Above target",
+        stable: "Stable",
+        moderate: "Moderate",
+        unstable: "Unstable",
+        rising: "Rising",
+        falling: "Falling",
+        unchanged: "Stable",
+        bleeding: "Bleeding",
+        urgent: "Warning signs",
+        alcohol: "Alcohol",
+        vitaminK: "Vitamin K",
+        activity: "Activity",
+        stress: "Stress",
+        wellbeing: "Well-being",
+        supplementaryMedication: "Additional medication",
+        healthEvent: "Event"
     },
     es: {
         title: "INR Tracker",
@@ -510,7 +845,7 @@ const translations = {
         payloadLabel: "Datos QR",
         payloadPlaceholder: "Escanear QR o pegar texto cifrado",
         codeLabel: "Código de acceso",
-        codePlaceholder: "p. ej. 12345-67890",
+        codePlaceholder: "p. ej. 1234567890",
         button: "Descifrar",
         reset: "Restablecer",
         missing: "Introduce datos QR y código de acceso.",
@@ -523,13 +858,13 @@ const translations = {
         generated: "Creado",
         medication: "Medicamento",
         target: "Rango objetivo",
-        chartTitle: "Evolución",
+        chartTitle: "Curva INR",
         chartDesc: "Desliza el gráfico lateralmente. Toca puntos para detalles.",
         targetLegend: "Rango objetivo",
         doseLegend: "Dosis",
         outLegend: "Fuera de rango",
         detailTitle: "Medición",
-        tableTitle: "Mediciones",
+        tableTitle: "4. Entradas del registro",
         date: "Fecha",
         dose: "Dosis",
         status: "Estado",
@@ -537,7 +872,47 @@ const translations = {
         inTarget: "En rango",
         highLow: "Desviaciones",
         doseChanges: "Cambios dosis",
-        noValue: "-"
+        noValue: "-",
+        reportTitle: "Informe INR",
+        patientTherapy: "1. Datos del paciente y tratamiento",
+        basicData: "Datos básicos",
+        therapyData: "Tratamiento",
+        additionalMedical: "Información médica adicional",
+        name: "Nombre",
+        birthDate: "Fecha de nacimiento",
+        gender: "Sexo",
+        diagnosis: "Diagnóstico",
+        condition: "Enfermedad de base",
+        allergies: "Alergias",
+        intolerances: "Intolerancias",
+        preexisting: "Antecedentes",
+        measurementSummary: "2. Resumen de mediciones",
+        chartSection: "3. Indicadores y gráficos",
+        lastINR: "Último INR",
+        averageINR: "Promedio",
+        stability: "Estabilidad",
+        trend: "Tendencia",
+        distributionTitle: "Distribución y boxplot",
+        boxPlot: "Boxplot INR",
+        targetStatus: "Rango objetivo",
+        notes: "Notas / eventos",
+        low: "Bajo objetivo",
+        high: "Sobre objetivo",
+        stable: "Estable",
+        moderate: "Moderado",
+        unstable: "Inestable",
+        rising: "Subiendo",
+        falling: "Bajando",
+        unchanged: "Estable",
+        bleeding: "Sangrado",
+        urgent: "Signos de alarma",
+        alcohol: "Alcohol",
+        vitaminK: "Vitamina K",
+        activity: "Actividad",
+        stress: "Estrés",
+        wellbeing: "Bienestar",
+        supplementaryMedication: "Medicación adicional",
+        healthEvent: "Evento"
     },
     fr: {
         title: "INR Tracker",
@@ -552,7 +927,7 @@ const translations = {
         payloadLabel: "Données QR",
         payloadPlaceholder: "Scanner le QR ou coller le texte chiffré",
         codeLabel: "Code d'accès",
-        codePlaceholder: "ex. 12345-67890",
+        codePlaceholder: "ex. 1234567890",
         button: "Déchiffrer",
         reset: "Réinitialiser",
         missing: "Saisir les données QR et le code d'accès.",
@@ -565,13 +940,13 @@ const translations = {
         generated: "Créé",
         medication: "Médicament",
         target: "Zone cible",
-        chartTitle: "Évolution",
+        chartTitle: "Courbe INR",
         chartDesc: "Balayer le graphique latéralement. Toucher les points pour les détails.",
         targetLegend: "Zone cible",
         doseLegend: "Dose",
         outLegend: "Hors cible",
         detailTitle: "Mesure",
-        tableTitle: "Mesures",
+        tableTitle: "4. Entrées du journal",
         date: "Date",
         dose: "Dose",
         status: "Statut",
@@ -579,7 +954,47 @@ const translations = {
         inTarget: "Dans la cible",
         highLow: "Écarts",
         doseChanges: "Changements dose",
-        noValue: "-"
+        noValue: "-",
+        reportTitle: "Rapport INR",
+        patientTherapy: "1. Données patient et traitement",
+        basicData: "Données de base",
+        therapyData: "Traitement",
+        additionalMedical: "Informations médicales complémentaires",
+        name: "Nom",
+        birthDate: "Date de naissance",
+        gender: "Genre",
+        diagnosis: "Diagnostic",
+        condition: "Affection sous-jacente",
+        allergies: "Allergies",
+        intolerances: "Intolérances",
+        preexisting: "Antécédents",
+        measurementSummary: "2. Résumé des mesures",
+        chartSection: "3. Indicateurs et graphiques",
+        lastINR: "Dernier INR",
+        averageINR: "Moyenne",
+        stability: "Stabilité",
+        trend: "Tendance",
+        distributionTitle: "Distribution et boxplot",
+        boxPlot: "Boxplot INR",
+        targetStatus: "Zone cible",
+        notes: "Notes / événements",
+        low: "Sous cible",
+        high: "Au-dessus",
+        stable: "Stable",
+        moderate: "Modéré",
+        unstable: "Instable",
+        rising: "En hausse",
+        falling: "En baisse",
+        unchanged: "Stable",
+        bleeding: "Saignement",
+        urgent: "Signes d'alerte",
+        alcohol: "Alcool",
+        vitaminK: "Vitamine K",
+        activity: "Activité",
+        stress: "Stress",
+        wellbeing: "Bien-être",
+        supplementaryMedication: "Médication associée",
+        healthEvent: "Événement"
     },
     pt: {
         title: "INR Tracker",
@@ -594,7 +1009,7 @@ const translations = {
         payloadLabel: "Dados QR",
         payloadPlaceholder: "Escanear QR ou colar texto cifrado",
         codeLabel: "Código de acesso",
-        codePlaceholder: "ex. 12345-67890",
+        codePlaceholder: "ex. 1234567890",
         button: "Decifrar",
         reset: "Redefinir",
         missing: "Insira os dados QR e o código de acesso.",
@@ -607,13 +1022,13 @@ const translations = {
         generated: "Criado",
         medication: "Medicamento",
         target: "Faixa-alvo",
-        chartTitle: "Evolução",
+        chartTitle: "Curva INR",
         chartDesc: "Deslize lateralmente no gráfico. Toque nos pontos para detalhes.",
         targetLegend: "Faixa-alvo",
         doseLegend: "Dose",
         outLegend: "Fora da faixa",
         detailTitle: "Medição",
-        tableTitle: "Medições",
+        tableTitle: "4. Registos",
         date: "Data",
         dose: "Dose",
         status: "Estado",
@@ -621,7 +1036,47 @@ const translations = {
         inTarget: "Na faixa",
         highLow: "Desvios",
         doseChanges: "Mudanças dose",
-        noValue: "-"
+        noValue: "-",
+        reportTitle: "Relatório INR",
+        patientTherapy: "1. Dados do paciente e terapia",
+        basicData: "Dados básicos",
+        therapyData: "Terapia",
+        additionalMedical: "Informações médicas adicionais",
+        name: "Nome",
+        birthDate: "Data de nascimento",
+        gender: "Género",
+        diagnosis: "Diagnóstico",
+        condition: "Condição subjacente",
+        allergies: "Alergias",
+        intolerances: "Intolerâncias",
+        preexisting: "Condições pré-existentes",
+        measurementSummary: "2. Resumo das medições",
+        chartSection: "3. Indicadores e gráficos",
+        lastINR: "Último INR",
+        averageINR: "Média",
+        stability: "Estabilidade",
+        trend: "Tendência",
+        distributionTitle: "Distribuição e boxplot",
+        boxPlot: "Boxplot INR",
+        targetStatus: "Faixa-alvo",
+        notes: "Notas / eventos",
+        low: "Abaixo",
+        high: "Acima",
+        stable: "Estável",
+        moderate: "Moderado",
+        unstable: "Instável",
+        rising: "Subindo",
+        falling: "Descendo",
+        unchanged: "Estável",
+        bleeding: "Sangramento",
+        urgent: "Sinais de alerta",
+        alcohol: "Álcool",
+        vitaminK: "Vitamina K",
+        activity: "Atividade",
+        stress: "Stress",
+        wellbeing: "Bem-estar",
+        supplementaryMedication: "Medicação adicional",
+        healthEvent: "Evento"
     }
 };
 
@@ -651,9 +1106,20 @@ function applyTranslations() {
     setText("ui-out-legend", lang.outLegend);
     setText("ui-detail-title", lang.detailTitle);
     setText("ui-table-title", lang.tableTitle);
+    setText("reportTitle", lang.reportTitle);
+    setText("ui-patient-therapy-title", lang.patientTherapy);
+    setText("ui-basic-data", lang.basicData);
+    setText("ui-therapy-data", lang.therapyData);
+    setText("ui-additional-medical", lang.additionalMedical);
+    setText("ui-summary-title", lang.measurementSummary);
+    setText("ui-chart-section-title", lang.chartSection);
+    setText("ui-distribution-title", lang.distributionTitle);
+    setText("ui-boxplot-title", lang.boxPlot);
     setText("thDate", lang.date);
     setText("thDose", lang.dose);
     setText("thStatus", lang.status);
+    setText("thTarget", lang.targetStatus);
+    setText("thNotes", lang.notes);
     document.getElementById("payloadInput").placeholder = lang.payloadPlaceholder;
     document.getElementById("codeInput").placeholder = lang.codePlaceholder;
 }
@@ -797,7 +1263,21 @@ function normalizePayload(payload) {
             inr: typeof entry.i === "number" ? entry.i : null,
             dose: entry.o || "",
             status: entry.s || "",
-            excluded: entry.x === true
+            statusText: entry.sl || "",
+            excluded: entry.x === true,
+            note: entry.n || "",
+            healthEvent: entry.h || "",
+            supplementaryMedication: entry.q || "",
+            wellbeing: typeof entry.w === "number" ? entry.w : null,
+            activity: entry.ac || "",
+            stress: entry.st || "",
+            vitaminK: entry.vk === true,
+            alcohol: entry.al === true,
+            bleedingEpisodes: typeof entry.be === "number" ? entry.be : null,
+            bleedingImpact: entry.bi || "",
+            bleedingNote: entry.bn || "",
+            urgentWarning: entry.uw === true,
+            minorBleeding: entry.mb === true
         }))
         .sort((a, b) => a.date.localeCompare(b.date));
 }
@@ -815,8 +1295,9 @@ function renderViewer() {
     const lower = payload.t?.[0] ?? 2;
     const upper = payload.t?.[1] ?? 3;
 
+    setText("reportTitle", lang.reportTitle);
     setText("periodTitle", payload.p?.l || lang.period);
-    setText("metaLine", `${lang.generated}: ${formatDateTime(payload.g)} · ${lang.target}: ${formatNumber(lower, 1)}-${formatNumber(upper, 1)} · ${lang.medication}: ${payload.m || lang.noValue}`);
+    document.getElementById("metaLine").innerHTML = `${escapeHTML(lang.generated)}<br>${escapeHTML(formatDateTime(payload.g))}<br>${escapeHTML(lang.target)}: ${escapeHTML(formatNumber(lower, 1))}-${escapeHTML(formatNumber(upper, 1))}`;
     setText("entryCount", `${entries.length} ${lang.entries}`);
 
     if (chartState.size !== "all") {
@@ -824,27 +1305,108 @@ function renderViewer() {
     }
     chartState.start = Math.max(0, Math.min(chartState.start, Math.max(0, entries.length - chartState.size)));
 
-    renderMetrics(entries, lower, upper);
+    renderReportInfo(payload, lower, upper);
+    renderSummary(entries, lower, upper, payload);
+    renderMetrics(entries, lower, upper, payload);
     renderChart();
+    renderDistribution(entries, lower, upper);
     renderTable(entries);
     document.getElementById("decodeSection").classList.add("hidden");
 }
 
-function renderMetrics(entries, lower, upper) {
+function renderReportInfo(payload, lower, upper) {
+    const report = payload.r || {};
+    const medication = report.med || payload.m || lang.noValue;
+    const rows = {
+        patientInfo: [
+            [lang.name, report.n],
+            [lang.birthDate, report.b ? formatDate(report.b) : ""],
+            [lang.gender, report.g]
+        ],
+        therapyInfo: [
+            [lang.diagnosis, report.d],
+            [lang.condition, report.c],
+            [lang.target, `${formatNumber(lower, 1)} - ${formatNumber(upper, 1)}`],
+            [lang.medication, medication]
+        ],
+        additionalInfo: [
+            [lang.allergies, report.a],
+            [lang.intolerances, report.l],
+            [lang.preexisting, report.p]
+        ]
+    };
+
+    Object.entries(rows).forEach(([id, values]) => {
+        const html = values
+            .filter(([, value]) => value && value !== lang.noValue)
+            .map(([label, value]) => infoRow(label, value))
+            .join("");
+        document.getElementById(id).innerHTML = html || infoRow(lang.noValue, lang.noValue);
+    });
+}
+
+function renderSummary(entries, lower, upper, payload) {
+    const stats = computeStats(entries, lower, upper, payload);
+    const rows = [
+        [lang.period, payload.p?.l || lang.noValue],
+        [lang.lastINR, stats.lastINRText],
+        [lang.averageINR, stats.averageText],
+        ["TTR", stats.ttrText],
+        [lang.stability, stats.stabilityText],
+        [lang.trend, stats.trendText],
+        [lang.median, stats.medianText],
+        [lang.doseChanges, String(stats.doseChanges)]
+    ];
+
+    document.getElementById("summaryRows").innerHTML = rows
+        .filter(([, value]) => value && value !== lang.noValue)
+        .map(([label, value]) => infoRow(label, value))
+        .join("");
+}
+
+function renderMetrics(entries, lower, upper, payload) {
+    const stats = computeStats(entries, lower, upper, payload);
+    const metrics = [
+        [lang.lastINR, stats.lastINRValue],
+        [lang.averageINR, stats.averageText],
+        ["TTR", stats.ttrText],
+        [lang.target, `${formatNumber(lower, 1)}-${formatNumber(upper, 1)}`]
+    ];
+    document.getElementById("metrics").innerHTML = metrics.map(([label, value]) => `
+        <div class="metric"><small>${escapeHTML(label)}</small><strong>${escapeHTML(value || lang.noValue)}</strong></div>
+    `).join("");
+}
+
+function infoRow(label, value) {
+    return `<div class="info-row"><span>${escapeHTML(label)}:</span><span>${escapeHTML(value || lang.noValue)}</span></div>`;
+}
+
+function computeStats(entries, lower, upper, payload) {
     const inrValues = entries.map(e => e.inr).filter(v => typeof v === "number");
     const inRange = inrValues.filter(v => v >= lower && v <= upper).length;
     const low = inrValues.filter(v => v < lower).length;
     const high = inrValues.filter(v => v > upper).length;
     const doseChanges = countDoseChanges(entries);
-    const metrics = [
-        [lang.median, inrValues.length ? formatNumber(median(inrValues), 2) : lang.noValue],
-        [lang.inTarget, inrValues.length ? `${Math.round((inRange / inrValues.length) * 100)}%` : lang.noValue],
-        [lang.highLow, `${low} / ${high}`],
-        [lang.doseChanges, String(doseChanges)]
-    ];
-    document.getElementById("metrics").innerHTML = metrics.map(([label, value]) => `
-        <div class="metric"><small>${escapeHTML(label)}</small><strong>${escapeHTML(value)}</strong></div>
-    `).join("");
+    const last = [...entries].reverse().find(entry => typeof entry.inr === "number");
+    const average = inrValues.length ? inrValues.reduce((sum, value) => sum + value, 0) / inrValues.length : null;
+    const sd = standardDeviation(inrValues);
+    const trend = trendLabel(entries);
+    const ttr = computeTTR(entries, lower, upper, payload.p);
+
+    return {
+        values: inrValues,
+        low,
+        high,
+        inRange,
+        doseChanges,
+        medianText: inrValues.length ? formatNumber(median(inrValues), 2) : lang.noValue,
+        averageText: average == null ? lang.noValue : formatNumber(average, 2),
+        lastINRValue: last ? formatNumber(last.inr, 2) : lang.noValue,
+        lastINRText: last ? `${formatNumber(last.inr, 2)} · ${formatDate(last.date)}` : lang.noValue,
+        ttrText: ttr == null ? lang.noValue : `${formatNumber(ttr, 1)}%`,
+        stabilityText: sd == null ? lang.noValue : `${stabilityLabel(sd)} (SD ${formatNumber(sd, 2)})`,
+        trendText: trend
+    };
 }
 
 function renderChart() {
@@ -866,8 +1428,8 @@ function renderChart() {
     const x = index => left + (visible.length <= 1 ? plotW / 2 : index / (visible.length - 1) * plotW);
 
     const grid = [1, 2, 3, 4].map(v => `
-        <line x1="${left}" y1="${y(v)}" x2="${width - right}" y2="${y(v)}" stroke="rgba(255,255,255,0.13)" />
-        <text x="${left - 12}" y="${y(v) + 4}" text-anchor="end" fill="#a1a1aa" font-size="14">${v}</text>
+        <line x1="${left}" y1="${y(v)}" x2="${width - right}" y2="${y(v)}" stroke="rgba(0,0,0,0.14)" />
+        <text x="${left - 12}" y="${y(v) + 4}" text-anchor="end" fill="#5f6068" font-size="14">${v}</text>
     `).join("");
 
     const targetBand = `
@@ -897,11 +1459,11 @@ function renderChart() {
 
     const labels = visible.map((entry, index) => {
         if (visible.length > 10 && index % Math.ceil(visible.length / 5) !== 0) return "";
-        return `<text x="${x(index)}" y="${height - 18}" text-anchor="middle" fill="#a1a1aa" font-size="13">${shortDate(entry.date)}</text>`;
+        return `<text x="${x(index)}" y="${height - 18}" text-anchor="middle" fill="#5f6068" font-size="13">${shortDate(entry.date)}</text>`;
     }).join("");
 
     svg.innerHTML = `
-        <rect width="${width}" height="${height}" fill="#151517" />
+        <rect width="${width}" height="${height}" fill="#f7f7f9" />
         ${targetBand}
         ${grid}
         ${doseBars}
@@ -921,16 +1483,80 @@ function renderChart() {
     updateWindowButtons();
 }
 
+function renderDistribution(entries, lower, upper) {
+    const values = entries.map(e => e.inr).filter(v => typeof v === "number");
+    const low = values.filter(v => v < lower).length;
+    const inRange = values.filter(v => v >= lower && v <= upper).length;
+    const high = values.filter(v => v > upper).length;
+    const total = low + inRange + high;
+    const donut = document.getElementById("distributionDonut");
+    const legend = document.getElementById("distributionLegend");
+
+    if (!total) {
+        donut.style.background = "#e5e5ea";
+        legend.innerHTML = `<span>${escapeHTML(lang.noValue)}</span>`;
+        renderBoxPlot(values);
+        return;
+    }
+
+    const lowDeg = (low / total) * 360;
+    const inDeg = (inRange / total) * 360;
+    const highDeg = 360 - lowDeg - inDeg;
+    donut.style.background = `conic-gradient(var(--orange) 0deg ${lowDeg}deg, var(--green) ${lowDeg}deg ${lowDeg + inDeg}deg, var(--red) ${lowDeg + inDeg}deg ${lowDeg + inDeg + highDeg}deg)`;
+    legend.innerHTML = [
+        legendItem("var(--green)", `${lang.targetLegend} (${formatNumber((inRange / total) * 100, 1)}%)`),
+        legendItem("var(--orange)", `${lang.low} (${formatNumber((low / total) * 100, 1)}%)`),
+        legendItem("var(--red)", `${lang.high} (${formatNumber((high / total) * 100, 1)}%)`)
+    ].join("");
+    renderBoxPlot(values);
+}
+
+function legendItem(color, text) {
+    return `<span><i class="swatch" style="background:${color};"></i>${escapeHTML(text)}</span>`;
+}
+
+function renderBoxPlot(values) {
+    const axis = document.getElementById("boxAxis");
+    const statsLine = document.getElementById("boxStats");
+    if (!values.length) {
+        axis.innerHTML = "";
+        statsLine.textContent = lang.noValue;
+        return;
+    }
+
+    const sorted = [...values].sort((a, b) => a - b);
+    const stats = {
+        min: sorted[0],
+        q1: percentile(sorted, 0.25),
+        median: percentile(sorted, 0.5),
+        q3: percentile(sorted, 0.75),
+        max: sorted[sorted.length - 1]
+    };
+    const spread = Math.max(stats.max - stats.min, 0.2);
+    const toPct = value => Math.max(0, Math.min(100, ((value - stats.min) / spread) * 100));
+    const q1 = toPct(stats.q1);
+    const q3 = toPct(stats.q3);
+    const med = toPct(stats.median);
+    axis.innerHTML = `
+        <div class="box-whisker" style="left:0%; width:100%;"></div>
+        <div class="box-range" style="left:${q1}%; width:${Math.max(2, q3 - q1)}%;"></div>
+        <div class="box-median" style="left:${med}%;"></div>
+    `;
+    statsLine.textContent = `Min ${formatNumber(stats.min, 2)} · Q1 ${formatNumber(stats.q1, 2)} · Med ${formatNumber(stats.median, 2)} · Q3 ${formatNumber(stats.q3, 2)} · Max ${formatNumber(stats.max, 2)}`;
+}
+
 function renderDetail(entry) {
     if (!entry) return;
     const card = document.getElementById("detailCard");
     const content = document.getElementById("detailContent");
     card.classList.remove("hidden");
+    const notes = entryNotes(entry);
     content.innerHTML = `
         <div><strong>${lang.date}:</strong> ${escapeHTML(formatDate(entry.date))}</div>
         <div><strong>INR:</strong> ${entry.inr == null ? lang.noValue : formatNumber(entry.inr, 2)}</div>
         <div><strong>${lang.dose}:</strong> ${escapeHTML(entry.dose || lang.noValue)}</div>
-        <div><strong>${lang.status}:</strong> ${escapeHTML(entry.status || lang.noValue)}</div>
+        <div><strong>${lang.status}:</strong> ${escapeHTML(entry.statusText || statusLabel(entry.status))}</div>
+        <div><strong>${lang.notes}:</strong> ${notes.length ? notes.map(escapeHTML).join(", ") : lang.noValue}</div>
     `;
 }
 
@@ -939,10 +1565,57 @@ function renderTable(entries) {
         <tr>
             <td>${escapeHTML(formatDate(entry.date))}</td>
             <td>${entry.inr == null ? lang.noValue : formatNumber(entry.inr, 2)}</td>
+            <td>${targetBadge(entry.inr)}</td>
             <td>${escapeHTML(entry.dose || lang.noValue)}</td>
-            <td>${escapeHTML(entry.status || lang.noValue)}${entry.excluded ? " · excluded" : ""}</td>
+            <td>${escapeHTML(entry.statusText || statusLabel(entry.status))}${entry.excluded ? " · excluded" : ""}</td>
+            <td>${renderEntryNotes(entry)}</td>
         </tr>
     `).join("");
+}
+
+function targetBadge(value) {
+    if (value == null || !decodedPayload) return `<span class="pill">${escapeHTML(lang.noValue)}</span>`;
+    const lower = decodedPayload.t?.[0] ?? 2;
+    const upper = decodedPayload.t?.[1] ?? 3;
+    let text = lang.targetLegend;
+    let color = "var(--green)";
+    if (value < lower) { text = `↓ ${lang.low}`; color = "var(--orange)"; }
+    if (value > upper) { text = `↑ ${lang.high}`; color = "var(--red)"; }
+    return `<span class="pill" style="color:${color}; background: color-mix(in srgb, ${color} 14%, white);">${escapeHTML(text)}</span>`;
+}
+
+function statusLabel(value) {
+    const map = {
+        open: "Offen",
+        taken: "Eingenommen",
+        unsure: "Unsicher",
+        forgotten: "Vergessen"
+    };
+    return map[value] || value || lang.noValue;
+}
+
+function renderEntryNotes(entry) {
+    const notes = entryNotes(entry);
+    if (!notes.length) return escapeHTML(lang.noValue);
+    return `<div class="note-list">${notes.map(note => `<span class="note-chip">${escapeHTML(note)}</span>`).join("")}</div>`;
+}
+
+function entryNotes(entry) {
+    const notes = [];
+    if (entry.urgentWarning) notes.push(lang.urgent);
+    if (entry.minorBleeding) notes.push(lang.bleeding);
+    if (entry.bleedingEpisodes) notes.push(`${lang.bleeding}: ${entry.bleedingEpisodes}`);
+    if (entry.bleedingImpact) notes.push(entry.bleedingImpact);
+    if (entry.activity) notes.push(`${lang.activity}: ${entry.activity}`);
+    if (entry.stress) notes.push(`${lang.stress}: ${entry.stress}`);
+    if (entry.wellbeing != null) notes.push(`${lang.wellbeing}: ${entry.wellbeing}`);
+    if (entry.vitaminK) notes.push(lang.vitaminK);
+    if (entry.alcohol) notes.push(lang.alcohol);
+    if (entry.supplementaryMedication) notes.push(`${lang.supplementaryMedication}: ${entry.supplementaryMedication}`);
+    if (entry.healthEvent) notes.push(`${lang.healthEvent}: ${entry.healthEvent}`);
+    if (entry.note) notes.push(entry.note);
+    if (entry.bleedingNote) notes.push(entry.bleedingNote);
+    return notes;
 }
 
 function visibleEntries() {
@@ -993,6 +1666,86 @@ function median(values) {
     const sorted = [...values].sort((a, b) => a - b);
     const middle = Math.floor(sorted.length / 2);
     return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function percentile(sortedValues, p) {
+    if (!sortedValues.length) return 0;
+    const clamped = Math.max(0, Math.min(1, p));
+    const position = (sortedValues.length - 1) * clamped;
+    const lowerIndex = Math.floor(position);
+    const upperIndex = Math.ceil(position);
+    if (lowerIndex === upperIndex) return sortedValues[lowerIndex];
+    const weight = position - lowerIndex;
+    return sortedValues[lowerIndex] * (1 - weight) + sortedValues[upperIndex] * weight;
+}
+
+function standardDeviation(values) {
+    if (values.length < 5) return null;
+    const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+    const variance = values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / Math.max(1, values.length - 1);
+    return Math.sqrt(variance);
+}
+
+function stabilityLabel(sd) {
+    if (sd < 0.4) return lang.stable;
+    if (sd <= 0.7) return lang.moderate;
+    return lang.unstable;
+}
+
+function trendLabel(entries) {
+    const points = entries
+        .filter(entry => typeof entry.inr === "number")
+        .slice(-14)
+        .map(entry => ({ x: new Date(`${entry.date}T00:00:00`).getTime() / 86400000, y: entry.inr }));
+    if (points.length < 3) return lang.noValue;
+    const meanX = points.reduce((sum, point) => sum + point.x, 0) / points.length;
+    const meanY = points.reduce((sum, point) => sum + point.y, 0) / points.length;
+    const denominator = points.reduce((sum, point) => sum + Math.pow(point.x - meanX, 2), 0);
+    if (!denominator) return lang.unchanged;
+    const slope = points.reduce((sum, point) => sum + (point.x - meanX) * (point.y - meanY), 0) / denominator;
+    const changePerWeek = slope * 7;
+    if (changePerWeek > 0.08) return lang.rising;
+    if (changePerWeek < -0.08) return lang.falling;
+    return lang.unchanged;
+}
+
+function computeTTR(entries, lower, upper, period) {
+    const points = entries
+        .filter(entry => typeof entry.inr === "number")
+        .map(entry => ({ date: new Date(`${entry.date}T00:00:00`), value: entry.inr }))
+        .filter(point => !Number.isNaN(point.date.getTime()))
+        .sort((a, b) => a.date - b.date);
+    if (points.length < 2) return null;
+
+    const periodStart = period?.s ? new Date(`${period.s}T00:00:00`) : points[0].date;
+    const periodEnd = period?.e ? new Date(`${period.e}T23:59:59`) : points[points.length - 1].date;
+    let inRangeMs = 0;
+    let totalMs = 0;
+
+    for (let index = 0; index < points.length - 1; index++) {
+        const a = points[index];
+        const b = points[index + 1];
+        const startTime = Math.max(a.date.getTime(), periodStart.getTime());
+        const endTime = Math.min(b.date.getTime(), periodEnd.getTime());
+        if (endTime <= startTime) continue;
+
+        const segmentMs = endTime - startTime;
+        totalMs += segmentMs;
+        inRangeMs += integrateLinearInRange(a.value, b.value, segmentMs, lower, upper);
+    }
+
+    return totalMs > 0 ? (inRangeMs / totalMs) * 100 : null;
+}
+
+function integrateLinearInRange(startValue, endValue, segmentMs, lower, upper) {
+    const samples = 48;
+    let inRange = 0;
+    for (let index = 0; index < samples; index++) {
+        const t = (index + 0.5) / samples;
+        const value = startValue + (endValue - startValue) * t;
+        if (value >= lower && value <= upper) inRange += 1;
+    }
+    return segmentMs * (inRange / samples);
 }
 
 function parseDose(value) {
