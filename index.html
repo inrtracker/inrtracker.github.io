@@ -21,6 +21,12 @@
         }
 
         * { box-sizing: border-box; }
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
         body {
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -46,7 +52,7 @@
         h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.02; letter-spacing: 0; }
         h2 { font-size: 20px; }
         h3 { font-size: 16px; }
-        p { color: var(--muted); line-height: 1.45; }
+        p { color: var(--muted); line-height: 1.45; overflow-wrap: anywhere; }
 
         .badge {
             display: inline-flex;
@@ -65,6 +71,7 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 14px;
+            min-width: 0;
         }
 
         .card {
@@ -159,6 +166,8 @@
             padding: clamp(16px, 3vw, 30px);
             box-shadow: 0 24px 70px rgba(0,0,0,0.36);
             border: 1px solid rgba(255,255,255,0.14);
+            max-width: 100%;
+            overflow: hidden;
         }
 
         .report-header {
@@ -191,6 +200,7 @@
             border-radius: 8px;
             box-shadow: none;
             color: #1d1d1f;
+            min-width: 0;
         }
 
         .report .card h2,
@@ -238,12 +248,14 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 14px;
+            min-width: 0;
         }
 
         .info-block {
             display: grid;
             gap: 7px;
             align-content: start;
+            min-width: 0;
         }
 
         .info-block h3 {
@@ -257,6 +269,8 @@
             gap: 10px;
             font-size: 13px;
             line-height: 1.35;
+            min-width: 0;
+            overflow-wrap: anywhere;
         }
 
         .info-row span:first-child {
@@ -268,6 +282,7 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 7px 18px;
+            min-width: 0;
         }
 
         .distribution-grid {
@@ -275,6 +290,7 @@
             grid-template-columns: 1fr;
             gap: 18px;
             align-items: center;
+            min-width: 0;
         }
 
         .donut-row {
@@ -355,7 +371,8 @@
             color: #424248;
             font-size: 12px;
             font-weight: 650;
-            white-space: nowrap;
+            max-width: 100%;
+            overflow-wrap: anywhere;
         }
 
         .scan-notice {
@@ -376,6 +393,7 @@
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
+            min-width: 0;
         }
 
         .metric {
@@ -384,6 +402,7 @@
             border-radius: 14px;
             padding: 13px;
             min-height: 82px;
+            min-width: 0;
         }
 
         .metric small {
@@ -396,6 +415,7 @@
         .metric strong {
             font-size: 28px;
             line-height: 1;
+            overflow-wrap: anywhere;
         }
 
         .chart-wrap {
@@ -403,6 +423,7 @@
             border-radius: 16px;
             border: 1px solid var(--line);
             background: #151517;
+            min-width: 0;
         }
 
         svg {
@@ -487,6 +508,7 @@
             padding: 11px 10px;
             border-bottom: 1px solid var(--line);
             font-size: 14px;
+            overflow-wrap: anywhere;
         }
 
         th {
@@ -506,6 +528,219 @@
             color: var(--muted);
             font-size: 12px;
             font-weight: 700;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 759px) {
+            main {
+                padding: 14px 12px 26px;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 12px 2px;
+            }
+
+            .badge {
+                font-size: 12px;
+                padding: 7px 9px;
+            }
+
+            .card {
+                border-radius: 14px;
+                padding: 14px;
+            }
+
+            .decode-card .row,
+            .decode-card button {
+                width: 100%;
+            }
+
+            .decode-card .row button {
+                width: auto;
+            }
+
+            .report {
+                border-radius: 14px;
+                padding: 12px;
+                margin-top: 10px !important;
+                box-shadow: 0 18px 44px rgba(0,0,0,0.32);
+            }
+
+            .report-header {
+                flex-direction: column;
+                gap: 8px;
+                padding-bottom: 11px;
+                margin-bottom: 12px;
+            }
+
+            .report-title {
+                font-size: 26px;
+                line-height: 1.08;
+            }
+
+            .report-meta {
+                text-align: left;
+                font-size: 12px;
+            }
+
+            .report .card {
+                padding: 12px;
+            }
+
+            .section-title {
+                font-size: 16px;
+                line-height: 1.25;
+            }
+
+            .info-grid,
+            .summary-grid,
+            .distribution-grid,
+            .metrics {
+                gap: 10px;
+            }
+
+            .info-block {
+                gap: 4px;
+            }
+
+            .info-row {
+                grid-template-columns: 1fr;
+                gap: 2px;
+                padding: 7px 0;
+                border-bottom: 1px solid #ececf0;
+            }
+
+            .info-row:last-child {
+                border-bottom: 0;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .metric {
+                min-height: 0;
+                padding: 12px;
+            }
+
+            .metric strong {
+                font-size: 24px;
+            }
+
+            .report .chart-wrap {
+                border-radius: 10px;
+            }
+
+            svg {
+                height: 250px;
+            }
+
+            .chart-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .seg,
+            .chart-controls .row {
+                width: 100%;
+            }
+
+            .seg button,
+            .chart-controls .row button {
+                flex: 1;
+            }
+
+            .legend {
+                gap: 8px;
+                font-size: 12px;
+            }
+
+            .donut-row {
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .donut {
+                width: 112px;
+                height: 112px;
+                flex: 0 0 auto;
+            }
+
+            .donut::after {
+                inset: 31px;
+            }
+
+            .box-axis {
+                margin-inline: 0;
+            }
+
+            table,
+            tbody,
+            tr,
+            td {
+                display: block;
+                width: 100%;
+            }
+
+            thead {
+                display: none;
+            }
+
+            table {
+                border-collapse: separate;
+                border-spacing: 0 10px;
+                overflow: visible;
+            }
+
+            tr {
+                border: 1px solid #e1e1e5;
+                border-radius: 8px;
+                background: #f9f9fb;
+                padding: 8px;
+            }
+
+            td {
+                display: grid;
+                grid-template-columns: minmax(86px, 0.36fr) 1fr;
+                gap: 8px;
+                align-items: start;
+                border-bottom: 0;
+                padding: 6px 4px;
+                font-size: 13px;
+            }
+
+            td::before {
+                content: attr(data-label);
+                color: #5f6068;
+                font-weight: 750;
+            }
+
+            .note-list {
+                gap: 4px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            main {
+                padding-inline: 10px;
+            }
+
+            .report {
+                padding: 10px;
+            }
+
+            svg {
+                height: 232px;
+            }
+
+            td {
+                grid-template-columns: 1fr;
+                gap: 2px;
+            }
         }
 
         @media (min-width: 760px) {
@@ -1561,14 +1796,23 @@ function renderDetail(entry) {
 }
 
 function renderTable(entries) {
+    const labels = {
+        date: escapeHTML(lang.date),
+        inr: "INR",
+        target: escapeHTML(lang.targetStatus),
+        dose: escapeHTML(lang.dose),
+        status: escapeHTML(lang.status),
+        notes: escapeHTML(lang.notes)
+    };
+
     document.getElementById("tableBody").innerHTML = entries.map(entry => `
         <tr>
-            <td>${escapeHTML(formatDate(entry.date))}</td>
-            <td>${entry.inr == null ? lang.noValue : formatNumber(entry.inr, 2)}</td>
-            <td>${targetBadge(entry.inr)}</td>
-            <td>${escapeHTML(entry.dose || lang.noValue)}</td>
-            <td>${escapeHTML(entry.statusText || statusLabel(entry.status))}${entry.excluded ? " · excluded" : ""}</td>
-            <td>${renderEntryNotes(entry)}</td>
+            <td data-label="${labels.date}">${escapeHTML(formatDate(entry.date))}</td>
+            <td data-label="${labels.inr}">${entry.inr == null ? lang.noValue : formatNumber(entry.inr, 2)}</td>
+            <td data-label="${labels.target}">${targetBadge(entry.inr)}</td>
+            <td data-label="${labels.dose}">${escapeHTML(entry.dose || lang.noValue)}</td>
+            <td data-label="${labels.status}">${escapeHTML(entry.statusText || statusLabel(entry.status))}${entry.excluded ? " · excluded" : ""}</td>
+            <td data-label="${labels.notes}">${renderEntryNotes(entry)}</td>
         </tr>
     `).join("");
 }
