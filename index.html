@@ -3,124 +3,981 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INR-Tracker: Data Viewer</title>
+    <title>INR Tracker - Arzt-Viewer</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #121212; color: #ffffff; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: #1c1c1e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; box-sizing: border-box; font-size: 16px; }
-        input { background: #2c2c2e; color: white; }
-        input::placeholder { color: #8e8e93; }
-        button { background: #ff9500; color: white; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        button:hover { background: #e08400; }
-        .entry { background: #2c2c2e; padding: 12px; margin: 8px 0; border-radius: 6px; border-left: 4px solid #ff9500; }
-        .description { color: #8e8e93; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
+        :root {
+            color-scheme: dark;
+            --bg: #050505;
+            --panel: #1c1c1e;
+            --panel-soft: #242426;
+            --line: rgba(255,255,255,0.12);
+            --text: #f5f5f7;
+            --muted: #a1a1aa;
+            --blue: #0a84ff;
+            --green: #30d158;
+            --orange: #ff9f0a;
+            --red: #ff453a;
+            --purple: #bf5af2;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: radial-gradient(circle at top, #171717 0, var(--bg) 42%);
+            color: var(--text);
+        }
+
+        main {
+            width: min(980px, 100%);
+            margin: 0 auto;
+            padding: 18px;
+        }
+
+        header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 18px 4px 14px;
+        }
+
+        h1, h2, h3, p { margin: 0; }
+        h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.02; letter-spacing: 0; }
+        h2 { font-size: 20px; }
+        h3 { font-size: 16px; }
+        p { color: var(--muted); line-height: 1.45; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.06);
+            color: var(--muted);
+            border-radius: 999px;
+            padding: 8px 10px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.065), rgba(255,255,255,0.035));
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+        }
+
+        .decode-card {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        textarea, input {
+            width: 100%;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.07);
+            color: var(--text);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        textarea {
+            min-height: 92px;
+            resize: vertical;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 13px;
+        }
+
+        input:focus, textarea:focus {
+            border-color: rgba(10,132,255,0.9);
+            box-shadow: 0 0 0 3px rgba(10,132,255,0.18);
+        }
+
+        button {
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: var(--orange);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+        button.secondary {
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+            border: 1px solid var(--line);
+        }
+
+        button:disabled {
+            opacity: 0.45;
+            cursor: default;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .status.error { color: var(--red); }
+        .status.ok { color: var(--green); }
+
+        .hidden { display: none !important; }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .metric {
+            background: rgba(255,255,255,0.055);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 13px;
+            min-height: 82px;
+        }
+
+        .metric small {
+            display: block;
+            color: var(--muted);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .metric strong {
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        .chart-wrap {
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: #151517;
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            height: 330px;
+            touch-action: pan-y;
+            user-select: none;
+        }
+
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 10px;
+            border-top: 1px solid var(--line);
+        }
+
+        .seg {
+            display: inline-flex;
+            background: rgba(255,255,255,0.07);
+            border-radius: 999px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .seg button {
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            background: transparent;
+            color: var(--muted);
+            border: 0;
+        }
+
+        .seg button.active {
+            background: rgba(255,149,0,0.25);
+            color: var(--orange);
+        }
+
+        .detail {
+            display: grid;
+            gap: 7px;
+            padding: 12px;
+            background: rgba(10,132,255,0.10);
+            border: 1px solid rgba(10,132,255,0.28);
+            border-radius: 14px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 13px;
+            padding: 10px 2px 0;
+        }
+
+        .legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .swatch {
+            width: 16px;
+            height: 8px;
+            border-radius: 999px;
+            display: inline-block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 14px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 11px 10px;
+            border-bottom: 1px solid var(--line);
+            font-size: 14px;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        tr:last-child td { border-bottom: 0; }
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 4px 8px;
+            background: rgba(255,255,255,0.08);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        @media (min-width: 760px) {
+            main { padding: 28px; }
+            .decode-card { grid-template-columns: 1.15fr 0.85fr; align-items: end; }
+            .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
     </style>
 </head>
 <body>
+<main>
+    <header>
+        <div>
+            <h1 id="ui-title">INR Tracker</h1>
+            <p id="ui-subtitle">Lokaler Arzt-Viewer</p>
+        </div>
+        <div class="badge" id="ui-local-badge">Lokal im Browser</div>
+    </header>
 
-<div class="container">
-    <h2 id="ui-title">INR-Tracker Daten-Decoder</h2>
-    <p id="ui-description" class="description">Lw_desc</p>
-    
-    <input type="text" id="encryptedInput">
-    <input type="password" id="pinInput">
-    <button id="ui-button" onclick="decryptPayload()">Daten entschlüsseln</button>
+    <section class="card" id="decodeSection">
+        <div class="decode-card">
+            <div>
+                <h2 id="ui-decode-title">Daten entschlüsseln</h2>
+                <p id="ui-decode-desc">Diese Seite entschlüsselt den QR-Code lokal im Browser. Es werden keine Patientendaten an einen Server gesendet.</p>
+            </div>
+            <div class="row">
+                <button class="secondary" id="clearButton" type="button">Zurücksetzen</button>
+            </div>
+            <div>
+                <label for="payloadInput" id="ui-payload-label">QR-Daten</label>
+                <textarea id="payloadInput" autocomplete="off" spellcheck="false"></textarea>
+            </div>
+            <div>
+                <label for="codeInput" id="ui-code-label">Freigabecode</label>
+                <input id="codeInput" type="password" inputmode="numeric" autocomplete="one-time-code">
+            </div>
+            <button id="decryptButton" type="button">Entschlüsseln</button>
+            <div id="status" class="status"></div>
+        </div>
+    </section>
 
-    <div id="output" style="margin-top: 20px;"></div>
-</div>
+    <section id="viewer" class="grid hidden" style="margin-top: 14px;">
+        <section class="card">
+            <div class="row" style="justify-content: space-between;">
+                <div>
+                    <h2 id="periodTitle">Zeitraum</h2>
+                    <p id="metaLine"></p>
+                </div>
+                <span class="pill" id="entryCount"></span>
+            </div>
+        </section>
+
+        <section class="metrics" id="metrics"></section>
+
+        <section class="card">
+            <div class="row" style="justify-content: space-between; margin-bottom: 12px;">
+                <div>
+                    <h2 id="ui-chart-title">Verlauf</h2>
+                    <p id="ui-chart-desc">Zum Verschieben seitlich über das Diagramm wischen. Punkte antippen für Details.</p>
+                </div>
+            </div>
+            <div class="chart-wrap">
+                <svg id="chart" viewBox="0 0 900 330" role="img"></svg>
+                <div class="chart-controls">
+                    <div class="seg">
+                        <button type="button" data-window="14">14</button>
+                        <button type="button" data-window="30">30</button>
+                        <button type="button" data-window="all">Alle</button>
+                    </div>
+                    <div class="row">
+                        <button class="secondary" id="prevButton" type="button">‹</button>
+                        <button class="secondary" id="nextButton" type="button">›</button>
+                    </div>
+                </div>
+            </div>
+            <div class="legend">
+                <span><i class="swatch" style="background: var(--blue);"></i>INR</span>
+                <span><i class="swatch" style="background: rgba(48,209,88,0.35);"></i><span id="ui-target-legend">Zielbereich</span></span>
+                <span><i class="swatch" style="background: var(--orange);"></i><span id="ui-dose-legend">Dosis</span></span>
+                <span><i class="swatch" style="background: var(--red);"></i><span id="ui-out-legend">Außerhalb</span></span>
+            </div>
+        </section>
+
+        <section class="card hidden" id="detailCard">
+            <h2 id="ui-detail-title">Messpunkt</h2>
+            <div class="detail" id="detailContent"></div>
+        </section>
+
+        <section class="card">
+            <h2 id="ui-table-title" style="margin-bottom: 10px;">Messwerte</h2>
+            <div style="overflow:auto;">
+                <table>
+                    <thead>
+                    <tr>
+                        <th id="thDate">Datum</th>
+                        <th>INR</th>
+                        <th id="thDose">Dosis</th>
+                        <th id="thStatus">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </section>
+</main>
 
 <script>
-// 1. Sprach-Datenbank (Deutsch & Englisch)
 const translations = {
     de: {
-        title: "INR-Tracker Daten-Decoder",
-        description: "Diese Seite läuft komplett lokal im Browser Ihres Praxis-PCs. Es werden keine Daten ins Internet übertragen. Fügen Sie den Inhalt des gescannten QR-Codes ein und geben Sie die PIN ein, die der Patient in seiner App festgelegt hat.",
-        placeholderQR: "Hier den Text aus dem QR-Code einfügen",
-        placeholderPin: "4-stellige PIN des Patienten",
-        button: "Daten entschlüsseln",
-        success: "Erfolgreich entschlüsseln:",
-        error: "Fehler: Falsche PIN oder beschädigte Daten.",
+        title: "INR Tracker",
+        subtitle: "Lokaler Arzt-Viewer",
+        local: "Lokal im Browser",
+        decodeTitle: "Daten entschlüsseln",
+        decodeDesc: "Diese Seite entschlüsselt den QR-Code lokal im Browser. Es werden keine Patientendaten an einen Server gesendet.",
+        payloadLabel: "QR-Daten",
+        payloadPlaceholder: "QR-Code scannen oder verschlüsselten Text einfügen",
+        codeLabel: "Freigabecode",
+        codePlaceholder: "z. B. 12345-67890",
+        button: "Entschlüsseln",
+        reset: "Zurücksetzen",
+        missing: "Bitte QR-Daten und Freigabecode eingeben.",
+        working: "Daten werden lokal entschlüsselt...",
+        success: "Daten erfolgreich lokal entschlüsselt.",
+        error: "Entschlüsselung fehlgeschlagen. Bitte Code und QR-Daten prüfen.",
+        unsupported: "Dieser Browser unterstützt die lokale Entpackung nicht. Bitte aktuellen Safari, Chrome oder Edge verwenden.",
+        period: "Zeitraum",
+        entries: "Einträge",
+        generated: "Erstellt",
+        medication: "Medikament",
+        target: "Zielbereich",
+        chartTitle: "Verlauf",
+        chartDesc: "Zum Verschieben seitlich über das Diagramm wischen. Punkte antippen für Details.",
+        targetLegend: "Zielbereich",
+        doseLegend: "Dosis",
+        outLegend: "Außerhalb",
+        detailTitle: "Messpunkt",
+        tableTitle: "Messwerte",
         date: "Datum",
-        inr: "INR",
-        dosis: "Dosis"
+        dose: "Dosis",
+        status: "Status",
+        median: "Median",
+        inTarget: "Im Ziel",
+        highLow: "Abweichungen",
+        doseChanges: "Dosiswechsel",
+        noValue: "-"
     },
     en: {
-        title: "INR-Tracker Data Decoder",
-        description: "This page runs entirely locally in your browser. No data is transmitted over the internet. Paste the content of the scanned QR code and enter the PIN set by the patient in their app.",
-        placeholderQR: "Paste the QR code text here",
-        placeholderPin: "Patient's 4-digit PIN",
-        button: "Decrypt Data",
-        success: "Successfully Decrypted:",
-        error: "Error: Incorrect PIN or corrupted data.",
+        title: "INR Tracker",
+        subtitle: "Local doctor viewer",
+        local: "Local in browser",
+        decodeTitle: "Decrypt data",
+        decodeDesc: "This page decrypts the QR code locally in the browser. No patient data is sent to a server.",
+        payloadLabel: "QR data",
+        payloadPlaceholder: "Scan QR code or paste encrypted text",
+        codeLabel: "Access code",
+        codePlaceholder: "e.g. 12345-67890",
+        button: "Decrypt",
+        reset: "Reset",
+        missing: "Please enter QR data and access code.",
+        working: "Decrypting locally...",
+        success: "Data successfully decrypted locally.",
+        error: "Decryption failed. Please check code and QR data.",
+        unsupported: "This browser does not support local decompression. Please use current Safari, Chrome, or Edge.",
+        period: "Period",
+        entries: "entries",
+        generated: "Generated",
+        medication: "Medication",
+        target: "Target range",
+        chartTitle: "Trend",
+        chartDesc: "Swipe sideways on the chart to move. Tap points for details.",
+        targetLegend: "Target range",
+        doseLegend: "Dose",
+        outLegend: "Out of range",
+        detailTitle: "Reading",
+        tableTitle: "Readings",
         date: "Date",
-        inr: "INR",
-        dosis: "Dosage"
+        dose: "Dose",
+        status: "Status",
+        median: "Median",
+        inTarget: "In target",
+        highLow: "Out of range",
+        doseChanges: "Dose changes",
+        noValue: "-"
+    },
+    es: {
+        title: "INR Tracker",
+        subtitle: "Visor médico local",
+        local: "Local en navegador",
+        decodeTitle: "Descifrar datos",
+        decodeDesc: "Esta página descifra el QR localmente en el navegador. No se envían datos del paciente a un servidor.",
+        payloadLabel: "Datos QR",
+        payloadPlaceholder: "Escanear QR o pegar texto cifrado",
+        codeLabel: "Código de acceso",
+        codePlaceholder: "p. ej. 12345-67890",
+        button: "Descifrar",
+        reset: "Restablecer",
+        missing: "Introduce datos QR y código de acceso.",
+        working: "Descifrando localmente...",
+        success: "Datos descifrados localmente.",
+        error: "No se pudo descifrar. Comprueba código y datos QR.",
+        unsupported: "Este navegador no admite la descompresión local. Usa Safari, Chrome o Edge actual.",
+        period: "Periodo",
+        entries: "entradas",
+        generated: "Creado",
+        medication: "Medicamento",
+        target: "Rango objetivo",
+        chartTitle: "Evolución",
+        chartDesc: "Desliza el gráfico lateralmente. Toca puntos para detalles.",
+        targetLegend: "Rango objetivo",
+        doseLegend: "Dosis",
+        outLegend: "Fuera de rango",
+        detailTitle: "Medición",
+        tableTitle: "Mediciones",
+        date: "Fecha",
+        dose: "Dosis",
+        status: "Estado",
+        median: "Mediana",
+        inTarget: "En rango",
+        highLow: "Desviaciones",
+        doseChanges: "Cambios dosis",
+        noValue: "-"
+    },
+    fr: {
+        title: "INR Tracker",
+        subtitle: "Visualiseur médecin local",
+        local: "Local dans le navigateur",
+        decodeTitle: "Déchiffrer les données",
+        decodeDesc: "Cette page déchiffre le QR localement dans le navigateur. Aucune donnée patient n'est envoyée à un serveur.",
+        payloadLabel: "Données QR",
+        payloadPlaceholder: "Scanner le QR ou coller le texte chiffré",
+        codeLabel: "Code d'accès",
+        codePlaceholder: "ex. 12345-67890",
+        button: "Déchiffrer",
+        reset: "Réinitialiser",
+        missing: "Saisir les données QR et le code d'accès.",
+        working: "Déchiffrement local...",
+        success: "Données déchiffrées localement.",
+        error: "Échec du déchiffrement. Vérifier le code et les données QR.",
+        unsupported: "Ce navigateur ne prend pas en charge la décompression locale. Utiliser Safari, Chrome ou Edge récent.",
+        period: "Période",
+        entries: "entrées",
+        generated: "Créé",
+        medication: "Médicament",
+        target: "Zone cible",
+        chartTitle: "Évolution",
+        chartDesc: "Balayer le graphique latéralement. Toucher les points pour les détails.",
+        targetLegend: "Zone cible",
+        doseLegend: "Dose",
+        outLegend: "Hors cible",
+        detailTitle: "Mesure",
+        tableTitle: "Mesures",
+        date: "Date",
+        dose: "Dose",
+        status: "Statut",
+        median: "Médiane",
+        inTarget: "Dans la cible",
+        highLow: "Écarts",
+        doseChanges: "Changements dose",
+        noValue: "-"
+    },
+    pt: {
+        title: "INR Tracker",
+        subtitle: "Visualizador médico local",
+        local: "Local no navegador",
+        decodeTitle: "Decifrar dados",
+        decodeDesc: "Esta página decifra o QR localmente no navegador. Nenhum dado do paciente é enviado para servidor.",
+        payloadLabel: "Dados QR",
+        payloadPlaceholder: "Escanear QR ou colar texto cifrado",
+        codeLabel: "Código de acesso",
+        codePlaceholder: "ex. 12345-67890",
+        button: "Decifrar",
+        reset: "Redefinir",
+        missing: "Insira os dados QR e o código de acesso.",
+        working: "Decifrando localmente...",
+        success: "Dados decifrados localmente.",
+        error: "Falha ao decifrar. Verifique código e dados QR.",
+        unsupported: "Este navegador não suporta descompressão local. Use Safari, Chrome ou Edge atual.",
+        period: "Período",
+        entries: "entradas",
+        generated: "Criado",
+        medication: "Medicamento",
+        target: "Faixa-alvo",
+        chartTitle: "Evolução",
+        chartDesc: "Deslize lateralmente no gráfico. Toque nos pontos para detalhes.",
+        targetLegend: "Faixa-alvo",
+        doseLegend: "Dose",
+        outLegend: "Fora da faixa",
+        detailTitle: "Medição",
+        tableTitle: "Medições",
+        date: "Data",
+        dose: "Dose",
+        status: "Estado",
+        median: "Mediana",
+        inTarget: "Na faixa",
+        highLow: "Desvios",
+        doseChanges: "Mudanças dose",
+        noValue: "-"
     }
 };
 
-// 2. Erkennen der Sprache des Browsers (Standard ist Englisch, falls nicht Deutsch)
-const userLang = navigator.language.startsWith('de') ? 'de' : 'en';
-const lang = translations[userLang];
+const languageCode = navigator.language.slice(0, 2);
+const lang = translations[languageCode] || translations.en;
+const kdfIterations = 150000;
+let decodedPayload = null;
+let chartState = { start: 0, size: 30, selectedIndex: null, dragStartX: null };
 
-// 3. UI-Texte beim Laden dynamisch setzen
-document.getElementById('ui-title').innerText = lang.title;
-document.getElementById('ui-description').innerText = lang.description;
-document.getElementById('encryptedInput').placeholder = lang.placeholderQR;
-document.getElementById('pinInput').placeholder = lang.placeholderPin;
-document.getElementById('ui-button').innerText = lang.button;
+function applyTranslations() {
+    document.documentElement.lang = translations[languageCode] ? languageCode : "en";
+    setText("ui-title", lang.title);
+    setText("ui-subtitle", lang.subtitle);
+    setText("ui-local-badge", lang.local);
+    setText("ui-decode-title", lang.decodeTitle);
+    setText("ui-decode-desc", lang.decodeDesc);
+    setText("ui-payload-label", lang.payloadLabel);
+    setText("ui-code-label", lang.codeLabel);
+    setText("decryptButton", lang.button);
+    setText("clearButton", lang.reset);
+    setText("ui-chart-title", lang.chartTitle);
+    setText("ui-chart-desc", lang.chartDesc);
+    setText("ui-target-legend", lang.targetLegend);
+    setText("ui-dose-legend", lang.doseLegend);
+    setText("ui-out-legend", lang.outLegend);
+    setText("ui-detail-title", lang.detailTitle);
+    setText("ui-table-title", lang.tableTitle);
+    setText("thDate", lang.date);
+    setText("thDose", lang.dose);
+    setText("thStatus", lang.status);
+    document.getElementById("payloadInput").placeholder = lang.payloadPlaceholder;
+    document.getElementById("codeInput").placeholder = lang.codePlaceholder;
+}
 
-// 4. Krypto-Logik bleibt gleich, nutzt aber übersetzte Ausgabetexte
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+function readPayloadFromFragment() {
+    const raw = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
+    const params = new URLSearchParams(raw);
+    const payload = params.get("p") || params.get("payload") || "";
+    if (payload) {
+        document.getElementById("payloadInput").value = payload;
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+        document.getElementById("codeInput").focus();
+    }
+}
+
+function normalizeCode(value) {
+    return (value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function base64URLToBytes(value) {
+    let base64 = (value || "").trim().replace(/-/g, "+").replace(/_/g, "/");
+    while (base64.length % 4) base64 += "=";
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+}
+
+async function inflateZlib(buffer) {
+    if (!("DecompressionStream" in window)) {
+        throw new Error(lang.unsupported);
+    }
+    const stream = new Blob([buffer]).stream().pipeThrough(new DecompressionStream("deflate"));
+    return await new Response(stream).arrayBuffer();
+}
+
 async function decryptPayload() {
-    const base64String = document.getElementById('encryptedInput').value;
-    const pin = document.getElementById('pinInput').value;
-    const outputDiv = document.getElementById('output');
-    
+    const payloadText = document.getElementById("payloadInput").value.trim();
+    const accessCode = normalizeCode(document.getElementById("codeInput").value);
+    if (!payloadText || !accessCode) {
+        showStatus(lang.missing, "error");
+        return;
+    }
+
     try {
-        const combinedData = Uint8Array.from(atob(base64String), c => c.charCodeAt(0));
-        const salt = new Uint8Array(16); // Muss exakt zu deinem Swift-Salt passen
-        
-        const enc = new TextEncoder();
-        const keyMaterial = await window.crypto.subtle.importKey(
-            "raw", enc.encode(pin), "PBKDF2", false, ["deriveKey"]
+        showStatus(lang.working, "");
+        const packed = base64URLToBytes(payloadText);
+        if (packed.length < 4 + 16 + 12 + 16) throw new Error("Payload too short");
+        const magic = new TextDecoder().decode(packed.slice(0, 4));
+        if (magic !== "INR1") throw new Error("Wrong payload format");
+
+        const salt = packed.slice(4, 20);
+        const combined = packed.slice(20);
+        const nonce = combined.slice(0, 12);
+        const ciphertext = combined.slice(12);
+
+        const keyMaterial = await crypto.subtle.importKey(
+            "raw",
+            new TextEncoder().encode(accessCode),
+            "PBKDF2",
+            false,
+            ["deriveKey"]
         );
-        
-        const key = await window.crypto.subtle.deriveKey(
-            { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+        const key = await crypto.subtle.deriveKey(
+            { name: "PBKDF2", salt, iterations: kdfIterations, hash: "SHA-256" },
             keyMaterial,
             { name: "AES-GCM", length: 256 },
             false,
             ["decrypt"]
         );
-        
-        const nonce = combinedData.slice(0, 12);
-        const ciphertextWithTag = combinedData.slice(12);
-        
-        const decryptedBuffer = await window.crypto.subtle.decrypt(
-            { name: "AES-GCM", iv: nonce },
-            key,
-            ciphertextWithTag
-        );
-        
-        const decryptedText = new TextDecoder().decode(decryptedBuffer);
-        const jsonData = JSON.parse(decryptedText);
-        
-        // Tabellen- / Listenaufbau mit lokalisierten Begriffen
-        outputDiv.innerHTML = `<h3>${lang.success}</h3>`;
-        jsonData.forEach(entry => {
-            // Falls deine JSON-Keys z.B. "date", "inr" und "dosage" heißen:
-            outputDiv.innerHTML += `
-                <div class="entry">
-                    <b>${lang.date}:</b> ${entry.date} | 
-                    <b>${lang.inr}:</b> ${entry.inr} | 
-                    <b>${lang.dosis}:</b> ${entry.dosage || entry.dosis || '-'}
-                </div>`;
-        });
-        
+        const compressed = await crypto.subtle.decrypt({ name: "AES-GCM", iv: nonce }, key, ciphertext);
+        const plainBuffer = await inflateZlib(compressed);
+        decodedPayload = JSON.parse(new TextDecoder().decode(plainBuffer));
+        normalizePayload(decodedPayload);
+        showStatus(lang.success, "ok");
+        renderViewer();
     } catch (error) {
-        outputDiv.innerHTML = `<p style='color: #ff453a;'>${lang.error}</p>`;
         console.error(error);
+        showStatus(error.message === lang.unsupported ? lang.unsupported : lang.error, "error");
     }
 }
+
+function normalizePayload(payload) {
+    payload.e = (payload.e || [])
+        .filter(entry => entry && entry.d)
+        .map(entry => ({
+            date: entry.d,
+            inr: typeof entry.i === "number" ? entry.i : null,
+            dose: entry.o || "",
+            status: entry.s || "",
+            excluded: entry.x === true
+        }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+function showStatus(message, type) {
+    const status = document.getElementById("status");
+    status.textContent = message;
+    status.className = `status ${type || ""}`;
+}
+
+function renderViewer() {
+    document.getElementById("viewer").classList.remove("hidden");
+    const payload = decodedPayload;
+    const entries = payload.e || [];
+    const lower = payload.t?.[0] ?? 2;
+    const upper = payload.t?.[1] ?? 3;
+
+    setText("periodTitle", payload.p?.l || lang.period);
+    setText("metaLine", `${lang.generated}: ${formatDateTime(payload.g)} · ${lang.target}: ${formatNumber(lower, 1)}-${formatNumber(upper, 1)} · ${lang.medication}: ${payload.m || lang.noValue}`);
+    setText("entryCount", `${entries.length} ${lang.entries}`);
+
+    if (chartState.size !== "all") {
+        chartState.size = Math.min(Number(chartState.size) || 30, Math.max(entries.length, 1));
+    }
+    chartState.start = Math.max(0, Math.min(chartState.start, Math.max(0, entries.length - chartState.size)));
+
+    renderMetrics(entries, lower, upper);
+    renderChart();
+    renderTable(entries);
+    document.getElementById("decodeSection").classList.add("hidden");
+}
+
+function renderMetrics(entries, lower, upper) {
+    const inrValues = entries.map(e => e.inr).filter(v => typeof v === "number");
+    const inRange = inrValues.filter(v => v >= lower && v <= upper).length;
+    const low = inrValues.filter(v => v < lower).length;
+    const high = inrValues.filter(v => v > upper).length;
+    const doseChanges = countDoseChanges(entries);
+    const metrics = [
+        [lang.median, inrValues.length ? formatNumber(median(inrValues), 2) : lang.noValue],
+        [lang.inTarget, inrValues.length ? `${Math.round((inRange / inrValues.length) * 100)}%` : lang.noValue],
+        [lang.highLow, `${low} / ${high}`],
+        [lang.doseChanges, String(doseChanges)]
+    ];
+    document.getElementById("metrics").innerHTML = metrics.map(([label, value]) => `
+        <div class="metric"><small>${escapeHTML(label)}</small><strong>${escapeHTML(value)}</strong></div>
+    `).join("");
+}
+
+function renderChart() {
+    const svg = document.getElementById("chart");
+    const entries = decodedPayload.e || [];
+    const lower = decodedPayload.t?.[0] ?? 2;
+    const upper = decodedPayload.t?.[1] ?? 3;
+    const visible = visibleEntries();
+    const values = entries.map(e => e.inr).filter(v => typeof v === "number");
+    const doseValues = entries.map(e => parseDose(e.dose)).filter(v => typeof v === "number");
+    const minY = Math.min(1, lower - 0.4, ...(values.length ? values : [lower]));
+    const maxY = Math.max(4, upper + 0.4, ...(values.length ? values : [upper]));
+    const maxDose = Math.max(1, ...(doseValues.length ? doseValues : [1]));
+    const width = 900, height = 330;
+    const left = 54, right = 24, top = 22, bottom = 46;
+    const plotW = width - left - right;
+    const plotH = height - top - bottom;
+    const y = value => top + (maxY - value) / (maxY - minY) * plotH;
+    const x = index => left + (visible.length <= 1 ? plotW / 2 : index / (visible.length - 1) * plotW);
+
+    const grid = [1, 2, 3, 4].map(v => `
+        <line x1="${left}" y1="${y(v)}" x2="${width - right}" y2="${y(v)}" stroke="rgba(255,255,255,0.13)" />
+        <text x="${left - 12}" y="${y(v) + 4}" text-anchor="end" fill="#a1a1aa" font-size="14">${v}</text>
+    `).join("");
+
+    const targetBand = `
+        <rect x="${left}" y="${y(upper)}" width="${plotW}" height="${Math.max(1, y(lower) - y(upper))}" fill="rgba(48,209,88,0.17)" />
+        <line x1="${left}" y1="${y(upper)}" x2="${width - right}" y2="${y(upper)}" stroke="rgba(48,209,88,0.75)" stroke-dasharray="8 8" />
+        <line x1="${left}" y1="${y(lower)}" x2="${width - right}" y2="${y(lower)}" stroke="rgba(48,209,88,0.75)" stroke-dasharray="8 8" />
+    `;
+
+    const linePoints = visible
+        .map((entry, index) => typeof entry.inr === "number" ? `${x(index)},${y(entry.inr)}` : null)
+        .filter(Boolean)
+        .join(" ");
+
+    const doseBars = visible.map((entry, index) => {
+        const dose = parseDose(entry.dose);
+        if (typeof dose !== "number") return "";
+        const barH = Math.max(3, Math.min(70, (dose / maxDose) * 70));
+        return `<rect x="${x(index) - 5}" y="${height - bottom - barH}" width="10" height="${barH}" rx="5" fill="rgba(255,159,10,0.72)" />`;
+    }).join("");
+
+    const points = visible.map((entry, index) => {
+        if (typeof entry.inr !== "number") return "";
+        const color = entry.inr < lower || entry.inr > upper ? "var(--red)" : "var(--green)";
+        const selected = chartState.selectedIndex === chartState.start + index;
+        return `<circle data-index="${chartState.start + index}" cx="${x(index)}" cy="${y(entry.inr)}" r="${selected ? 9 : 7}" fill="${color}" stroke="${selected ? "#fff" : "transparent"}" stroke-width="2" style="cursor:pointer" />`;
+    }).join("");
+
+    const labels = visible.map((entry, index) => {
+        if (visible.length > 10 && index % Math.ceil(visible.length / 5) !== 0) return "";
+        return `<text x="${x(index)}" y="${height - 18}" text-anchor="middle" fill="#a1a1aa" font-size="13">${shortDate(entry.date)}</text>`;
+    }).join("");
+
+    svg.innerHTML = `
+        <rect width="${width}" height="${height}" fill="#151517" />
+        ${targetBand}
+        ${grid}
+        ${doseBars}
+        ${linePoints ? `<polyline points="${linePoints}" fill="none" stroke="var(--blue)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />` : ""}
+        ${points}
+        ${labels}
+    `;
+
+    svg.querySelectorAll("circle[data-index]").forEach(circle => {
+        circle.addEventListener("click", () => {
+            chartState.selectedIndex = Number(circle.dataset.index);
+            renderChart();
+            renderDetail(entries[chartState.selectedIndex]);
+        });
+    });
+
+    updateWindowButtons();
+}
+
+function renderDetail(entry) {
+    if (!entry) return;
+    const card = document.getElementById("detailCard");
+    const content = document.getElementById("detailContent");
+    card.classList.remove("hidden");
+    content.innerHTML = `
+        <div><strong>${lang.date}:</strong> ${escapeHTML(formatDate(entry.date))}</div>
+        <div><strong>INR:</strong> ${entry.inr == null ? lang.noValue : formatNumber(entry.inr, 2)}</div>
+        <div><strong>${lang.dose}:</strong> ${escapeHTML(entry.dose || lang.noValue)}</div>
+        <div><strong>${lang.status}:</strong> ${escapeHTML(entry.status || lang.noValue)}</div>
+    `;
+}
+
+function renderTable(entries) {
+    document.getElementById("tableBody").innerHTML = entries.map(entry => `
+        <tr>
+            <td>${escapeHTML(formatDate(entry.date))}</td>
+            <td>${entry.inr == null ? lang.noValue : formatNumber(entry.inr, 2)}</td>
+            <td>${escapeHTML(entry.dose || lang.noValue)}</td>
+            <td>${escapeHTML(entry.status || lang.noValue)}${entry.excluded ? " · excluded" : ""}</td>
+        </tr>
+    `).join("");
+}
+
+function visibleEntries() {
+    const entries = decodedPayload?.e || [];
+    const size = chartState.size === "all" ? entries.length : Math.min(chartState.size, entries.length);
+    chartState.start = Math.max(0, Math.min(chartState.start, Math.max(0, entries.length - size)));
+    return entries.slice(chartState.start, chartState.start + size);
+}
+
+function shiftChart(direction) {
+    const entries = decodedPayload?.e || [];
+    const size = chartState.size === "all" ? entries.length : chartState.size;
+    const step = Math.max(1, Math.ceil(size / 3));
+    chartState.start = Math.max(0, Math.min(chartState.start + direction * step, Math.max(0, entries.length - size)));
+    chartState.selectedIndex = null;
+    renderChart();
+}
+
+function setWindowSize(value) {
+    const entries = decodedPayload?.e || [];
+    chartState.size = value === "all" ? "all" : Math.min(Number(value), entries.length || Number(value));
+    chartState.start = Math.max(0, Math.min(chartState.start, Math.max(0, entries.length - (chartState.size === "all" ? entries.length : chartState.size))));
+    chartState.selectedIndex = null;
+    renderChart();
+}
+
+function updateWindowButtons() {
+    document.querySelectorAll("[data-window]").forEach(button => {
+        const value = button.dataset.window;
+        const isActive = chartState.size === "all" ? value === "all" : String(chartState.size) === value;
+        button.classList.toggle("active", isActive);
+    });
+}
+
+function countDoseChanges(entries) {
+    let previous = null;
+    let changes = 0;
+    entries.forEach(entry => {
+        const dose = (entry.dose || "").trim();
+        if (!dose) return;
+        if (previous !== null && previous !== dose) changes++;
+        previous = dose;
+    });
+    return changes;
+}
+
+function median(values) {
+    const sorted = [...values].sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+    return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function parseDose(value) {
+    if (!value) return null;
+    const parsed = Number(String(value).replace(",", "."));
+    return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatNumber(value, digits) {
+    return new Intl.NumberFormat(navigator.language, {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+    }).format(value);
+}
+
+function formatDate(value) {
+    const date = new Date(`${value}T00:00:00`);
+    return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(navigator.language, { dateStyle: "medium" }).format(date);
+}
+
+function shortDate(value) {
+    const date = new Date(`${value}T00:00:00`);
+    return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(navigator.language, { day: "2-digit", month: "2-digit" }).format(date);
+}
+
+function formatDateTime(value) {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? (value || lang.noValue) : new Intl.DateTimeFormat(navigator.language, { dateStyle: "medium", timeStyle: "short" }).format(date);
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+    }[char]));
+}
+
+function wireEvents() {
+    document.getElementById("decryptButton").addEventListener("click", decryptPayload);
+    document.getElementById("clearButton").addEventListener("click", () => {
+        document.getElementById("payloadInput").value = "";
+        document.getElementById("codeInput").value = "";
+        document.getElementById("viewer").classList.add("hidden");
+        document.getElementById("decodeSection").classList.remove("hidden");
+        showStatus("", "");
+    });
+    document.getElementById("prevButton").addEventListener("click", () => shiftChart(-1));
+    document.getElementById("nextButton").addEventListener("click", () => shiftChart(1));
+    document.querySelectorAll("[data-window]").forEach(button => {
+        button.addEventListener("click", () => setWindowSize(button.dataset.window));
+    });
+
+    const svg = document.getElementById("chart");
+    svg.addEventListener("pointerdown", event => {
+        chartState.dragStartX = event.clientX;
+    });
+    svg.addEventListener("pointerup", event => {
+        if (chartState.dragStartX == null) return;
+        const delta = event.clientX - chartState.dragStartX;
+        chartState.dragStartX = null;
+        if (Math.abs(delta) > 38) shiftChart(delta < 0 ? 1 : -1);
+    });
+    svg.addEventListener("pointercancel", () => {
+        chartState.dragStartX = null;
+    });
+}
+
+applyTranslations();
+wireEvents();
+readPayloadFromFragment();
 </script>
 </body>
 </html>
