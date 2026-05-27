@@ -160,9 +160,9 @@
         .hidden { display: none !important; }
 
         .report {
-            background: #ffffff;
+            background: linear-gradient(180deg, #f7f8fb 0%, #ffffff 36%, #f4f6f9 100%);
             color: #1d1d1f;
-            border-radius: 18px;
+            border-radius: 22px;
             padding: clamp(16px, 3vw, 30px);
             box-shadow: 0 24px 70px rgba(0,0,0,0.36);
             border: 1px solid rgba(255,255,255,0.14);
@@ -175,32 +175,42 @@
             justify-content: space-between;
             gap: 18px;
             align-items: flex-start;
-            border-bottom: 1px solid #d8d8dc;
-            padding-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 18px;
+            padding: 18px;
             margin-bottom: 16px;
+            background:
+                linear-gradient(135deg, rgba(10,132,255,0.30), transparent 42%),
+                linear-gradient(145deg, #121826, #1c1f2a 58%, #101014);
+            box-shadow: 0 16px 38px rgba(15,23,42,0.16);
         }
 
         .report-title {
-            color: #111114;
+            color: #ffffff;
             font-size: clamp(26px, 4vw, 38px);
             line-height: 1.05;
             font-weight: 800;
         }
 
+        .report-header p {
+            color: rgba(255,255,255,0.72);
+        }
+
         .report-meta {
-            color: #5f6068;
+            color: rgba(255,255,255,0.72);
             font-size: 13px;
             line-height: 1.35;
             text-align: right;
         }
 
         .report .card {
-            background: #ffffff;
-            border: 1px solid #d8d8dc;
-            border-radius: 8px;
-            box-shadow: none;
+            background: linear-gradient(180deg, #ffffff, #fbfbfd);
+            border: 1px solid #e0e2e8;
+            border-radius: 16px;
+            box-shadow: 0 10px 26px rgba(15,23,42,0.06);
             color: #1d1d1f;
             min-width: 0;
+            animation: cardIn 460ms ease both;
         }
 
         .report .card h2,
@@ -217,9 +227,10 @@
         }
 
         .report .metric {
-            background: #f4f4f6;
-            border-color: #e1e1e5;
-            border-radius: 8px;
+            background: linear-gradient(180deg, #f8fafc, #eef2f7);
+            border-color: #e1e6ef;
+            border-radius: 14px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
         }
 
         .report .pill {
@@ -227,12 +238,12 @@
         }
 
         .report .chart-wrap {
-            border-color: #d8d8dc;
-            background: #f7f7f9;
+            border-color: #dce1e8;
+            background: #f7f9fc;
         }
 
         .report svg {
-            background: #f7f7f9;
+            background: #f7f9fc;
         }
 
         .section-title {
@@ -288,7 +299,7 @@
         .distribution-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 18px;
+            gap: 22px;
             align-items: center;
             min-width: 0;
         }
@@ -301,60 +312,116 @@
         }
 
         .donut {
-            width: 140px;
-            height: 140px;
+            width: 158px;
+            height: 158px;
             border-radius: 50%;
             position: relative;
             background: conic-gradient(var(--green) 0deg, var(--green) 120deg, var(--orange) 120deg, var(--orange) 210deg, var(--red) 210deg);
+            box-shadow: 0 14px 32px rgba(15,23,42,0.14);
+            transform: scale(0.92);
+            opacity: 0;
+            animation: donutIn 620ms ease 120ms forwards;
         }
 
         .donut::after {
             content: "";
             position: absolute;
-            inset: 38px;
+            inset: 43px;
             border-radius: 50%;
             background: #ffffff;
             border: 1px solid #e1e1e5;
+            box-shadow: inset 0 4px 14px rgba(15,23,42,0.08);
+        }
+
+        .donut-center {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            display: grid;
+            place-content: center;
+            text-align: center;
+            color: #1d1d1f;
+            pointer-events: none;
+        }
+
+        .donut-center strong {
+            display: block;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .donut-center span {
+            display: block;
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 4px;
+            text-transform: uppercase;
         }
 
         .boxplot {
-            min-height: 96px;
+            min-height: 190px;
             display: grid;
-            gap: 8px;
+            gap: 10px;
+            align-content: center;
         }
 
         .box-axis {
             position: relative;
-            height: 34px;
-            border-bottom: 1px solid #a7a7af;
-            margin: 8px 8px 0;
+            min-height: 172px;
+            border: 1px solid #e2e7f0;
+            border-radius: 16px;
+            background:
+                radial-gradient(circle at top right, rgba(10,132,255,0.10), transparent 38%),
+                linear-gradient(180deg, #fbfdff, #f5f7fb);
+            margin: 0;
+            overflow: hidden;
         }
 
-        .box-whisker,
-        .box-range,
-        .box-median {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
+        .range-svg {
+            width: 100%;
+            height: 172px;
+            background: transparent !important;
         }
 
-        .box-whisker {
-            height: 2px;
-            background: #1d1d1f;
+        .range-line {
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+            animation: lineDraw 780ms ease forwards;
         }
 
-        .box-range {
-            height: 26px;
-            border: 2px solid var(--blue);
-            background: rgba(10,132,255,0.16);
-            border-radius: 4px;
+        .range-box {
+            transform-box: fill-box;
+            transform-origin: center;
+            transform: scaleX(0.05);
+            animation: boxGrow 620ms ease 180ms forwards;
         }
 
-        .box-median {
-            width: 3px;
-            height: 30px;
-            background: var(--blue);
-            border-radius: 2px;
+        .range-marker,
+        .range-dot,
+        .range-label {
+            opacity: 0;
+            animation: fadeUp 420ms ease 420ms forwards;
+        }
+
+        .box-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            color: #5f6068;
+            font-size: 12px;
+            line-height: 1.2;
+        }
+
+        .box-stats span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border-radius: 999px;
+            background: #eef2f7;
+            color: #4b5563;
+            padding: 5px 8px;
+            font-weight: 700;
         }
 
         .note-list {
@@ -403,6 +470,7 @@
             padding: 13px;
             min-height: 82px;
             min-width: 0;
+            animation: fadeUp 440ms ease both;
         }
 
         .metric small {
@@ -424,6 +492,27 @@
             border: 1px solid var(--line);
             background: #151517;
             min-width: 0;
+        }
+
+        .chart-line {
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+            animation: lineDraw 780ms ease forwards;
+        }
+
+        .dose-bar {
+            transform-box: fill-box;
+            transform-origin: bottom;
+            transform: scaleY(0.08);
+            animation: barGrow 520ms ease forwards;
+        }
+
+        .chart-point {
+            opacity: 0;
+            transform-box: fill-box;
+            transform-origin: center;
+            transform: scale(0.45);
+            animation: pointIn 380ms ease forwards;
         }
 
         svg {
@@ -483,7 +572,7 @@
             padding: 10px 2px 0;
         }
 
-        .legend span {
+        .legend > span {
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -494,6 +583,42 @@
             height: 8px;
             border-radius: 999px;
             display: inline-block;
+        }
+
+        .legend > span {
+            border-radius: 999px;
+            background: #f3f5f8;
+            padding: 5px 8px;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes lineDraw {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes barGrow {
+            to { transform: scaleY(1); }
+        }
+
+        @keyframes pointIn {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes boxGrow {
+            to { transform: scaleX(1); }
+        }
+
+        @keyframes donutIn {
+            to { opacity: 1; transform: scale(1); }
         }
 
         table {
@@ -867,9 +992,9 @@
                     <div class="legend" id="distributionLegend"></div>
                 </div>
                 <div class="boxplot">
-                    <h3 id="ui-boxplot-title">INR Box Plot</h3>
+                    <h3 id="ui-boxplot-title">INR-Spannweite</h3>
                     <div class="box-axis" id="boxAxis"></div>
-                    <p id="boxStats"></p>
+                    <p class="box-stats" id="boxStats"></p>
                 </div>
             </div>
         </section>
@@ -963,8 +1088,8 @@ const translations = {
         averageINR: "Durchschnitt",
         stability: "Stabilität",
         trend: "Trend",
-        distributionTitle: "Verteilung und Boxplot",
-        boxPlot: "INR Box Plot",
+        distributionTitle: "Verteilung und INR-Spannweite",
+        boxPlot: "INR-Spannweite",
         targetStatus: "Zielbereich",
         notes: "Notizen / Vorkommnisse",
         low: "Unter Ziel",
@@ -1045,8 +1170,8 @@ const translations = {
         averageINR: "Average",
         stability: "Stability",
         trend: "Trend",
-        distributionTitle: "Distribution and box plot",
-        boxPlot: "INR box plot",
+        distributionTitle: "Distribution and INR range",
+        boxPlot: "INR range",
         targetStatus: "Target range",
         notes: "Notes / events",
         low: "Below target",
@@ -1127,8 +1252,8 @@ const translations = {
         averageINR: "Promedio",
         stability: "Estabilidad",
         trend: "Tendencia",
-        distributionTitle: "Distribución y boxplot",
-        boxPlot: "Boxplot INR",
+        distributionTitle: "Distribución y rango INR",
+        boxPlot: "Rango INR",
         targetStatus: "Rango objetivo",
         notes: "Notas / eventos",
         low: "Bajo objetivo",
@@ -1209,8 +1334,8 @@ const translations = {
         averageINR: "Moyenne",
         stability: "Stabilité",
         trend: "Tendance",
-        distributionTitle: "Distribution et boxplot",
-        boxPlot: "Boxplot INR",
+        distributionTitle: "Distribution et amplitude INR",
+        boxPlot: "Amplitude INR",
         targetStatus: "Zone cible",
         notes: "Notes / événements",
         low: "Sous cible",
@@ -1291,8 +1416,8 @@ const translations = {
         averageINR: "Média",
         stability: "Estabilidade",
         trend: "Tendência",
-        distributionTitle: "Distribuição e boxplot",
-        boxPlot: "Boxplot INR",
+        distributionTitle: "Distribuição e faixa INR",
+        boxPlot: "Faixa INR",
         targetStatus: "Faixa-alvo",
         notes: "Notas / eventos",
         low: "Abaixo",
@@ -1682,14 +1807,14 @@ function renderChart() {
         const dose = parseDose(entry.dose);
         if (typeof dose !== "number") return "";
         const barH = Math.max(3, Math.min(70, (dose / maxDose) * 70));
-        return `<rect x="${x(index) - 5}" y="${height - bottom - barH}" width="10" height="${barH}" rx="5" fill="rgba(255,159,10,0.72)" />`;
+        return `<rect class="dose-bar" x="${x(index) - 5}" y="${height - bottom - barH}" width="10" height="${barH}" rx="5" fill="rgba(255,159,10,0.72)" style="animation-delay:${120 + index * 22}ms" />`;
     }).join("");
 
     const points = visible.map((entry, index) => {
         if (typeof entry.inr !== "number") return "";
         const color = entry.inr < lower || entry.inr > upper ? "var(--red)" : "var(--green)";
         const selected = chartState.selectedIndex === chartState.start + index;
-        return `<circle data-index="${chartState.start + index}" cx="${x(index)}" cy="${y(entry.inr)}" r="${selected ? 9 : 7}" fill="${color}" stroke="${selected ? "#fff" : "transparent"}" stroke-width="2" style="cursor:pointer" />`;
+        return `<circle class="chart-point" data-index="${chartState.start + index}" cx="${x(index)}" cy="${y(entry.inr)}" r="${selected ? 9 : 7}" fill="${color}" stroke="${selected ? "#fff" : "transparent"}" stroke-width="2" style="cursor:pointer; animation-delay:${280 + index * 18}ms" />`;
     }).join("");
 
     const labels = visible.map((entry, index) => {
@@ -1702,7 +1827,7 @@ function renderChart() {
         ${targetBand}
         ${grid}
         ${doseBars}
-        ${linePoints ? `<polyline points="${linePoints}" fill="none" stroke="var(--blue)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />` : ""}
+        ${linePoints ? `<polyline class="chart-line" pathLength="1" points="${linePoints}" fill="none" stroke="var(--blue)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />` : ""}
         ${points}
         ${labels}
     `;
@@ -1729,8 +1854,9 @@ function renderDistribution(entries, lower, upper) {
 
     if (!total) {
         donut.style.background = "#e5e5ea";
+        donut.innerHTML = `<div class="donut-center"><strong>0</strong><span>${escapeHTML(lang.entries)}</span></div>`;
         legend.innerHTML = `<span>${escapeHTML(lang.noValue)}</span>`;
-        renderBoxPlot(values);
+        renderBoxPlot(values, lower, upper);
         return;
     }
 
@@ -1738,19 +1864,20 @@ function renderDistribution(entries, lower, upper) {
     const inDeg = (inRange / total) * 360;
     const highDeg = 360 - lowDeg - inDeg;
     donut.style.background = `conic-gradient(var(--orange) 0deg ${lowDeg}deg, var(--green) ${lowDeg}deg ${lowDeg + inDeg}deg, var(--red) ${lowDeg + inDeg}deg ${lowDeg + inDeg + highDeg}deg)`;
+    donut.innerHTML = `<div class="donut-center"><strong>${total}</strong><span>${escapeHTML(lang.entries)}</span></div>`;
     legend.innerHTML = [
-        legendItem("var(--green)", `${lang.targetLegend} (${formatNumber((inRange / total) * 100, 1)}%)`),
-        legendItem("var(--orange)", `${lang.low} (${formatNumber((low / total) * 100, 1)}%)`),
-        legendItem("var(--red)", `${lang.high} (${formatNumber((high / total) * 100, 1)}%)`)
+        legendItem("var(--green)", `${lang.targetLegend}: ${inRange} (${formatNumber((inRange / total) * 100, 1)}%)`),
+        legendItem("var(--orange)", `${lang.low}: ${low} (${formatNumber((low / total) * 100, 1)}%)`),
+        legendItem("var(--red)", `${lang.high}: ${high} (${formatNumber((high / total) * 100, 1)}%)`)
     ].join("");
-    renderBoxPlot(values);
+    renderBoxPlot(values, lower, upper);
 }
 
 function legendItem(color, text) {
     return `<span><i class="swatch" style="background:${color};"></i>${escapeHTML(text)}</span>`;
 }
 
-function renderBoxPlot(values) {
+function renderBoxPlot(values, lower, upper) {
     const axis = document.getElementById("boxAxis");
     const statsLine = document.getElementById("boxStats");
     if (!values.length) {
@@ -1767,17 +1894,54 @@ function renderBoxPlot(values) {
         q3: percentile(sorted, 0.75),
         max: sorted[sorted.length - 1]
     };
-    const spread = Math.max(stats.max - stats.min, 0.2);
-    const toPct = value => Math.max(0, Math.min(100, ((value - stats.min) / spread) * 100));
-    const q1 = toPct(stats.q1);
-    const q3 = toPct(stats.q3);
-    const med = toPct(stats.median);
+    const padding = 0.18;
+    const scaleMin = Math.min(stats.min, lower) - padding;
+    const scaleMax = Math.max(stats.max, upper) + padding;
+    const spread = Math.max(scaleMax - scaleMin, 0.5);
+    const width = 640;
+    const height = 172;
+    const left = 34;
+    const right = 34;
+    const plotW = width - left - right;
+    const axisY = 82;
+    const toX = value => left + Math.max(0, Math.min(1, (value - scaleMin) / spread)) * plotW;
+    const targetX = toX(lower);
+    const targetW = Math.max(3, toX(upper) - targetX);
+    const q1X = toX(stats.q1);
+    const q3X = toX(stats.q3);
+    const minX = toX(stats.min);
+    const maxX = toX(stats.max);
+    const medX = toX(stats.median);
+    const sample = sorted.length > 44 ? sorted.filter((_, index) => index % Math.ceil(sorted.length / 44) === 0) : sorted;
+    const dots = sample.map((value, index) => {
+        const offset = ((index % 5) - 2) * 4;
+        const color = value < lower ? "var(--orange)" : value > upper ? "var(--red)" : "var(--green)";
+        return `<circle class="range-dot" cx="${toX(value)}" cy="${axisY + 44 + offset}" r="4.2" fill="${color}" opacity="0.72" style="animation-delay:${360 + index * 16}ms"><title>INR ${formatNumber(value, 2)}</title></circle>`;
+    }).join("");
+
     axis.innerHTML = `
-        <div class="box-whisker" style="left:0%; width:100%;"></div>
-        <div class="box-range" style="left:${q1}%; width:${Math.max(2, q3 - q1)}%;"></div>
-        <div class="box-median" style="left:${med}%;"></div>
+        <svg class="range-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHTML(lang.boxPlot)}">
+            <rect x="0" y="0" width="${width}" height="${height}" fill="transparent" />
+            <rect x="${targetX}" y="34" width="${targetW}" height="82" rx="14" fill="rgba(48,209,88,0.13)" stroke="rgba(48,209,88,0.44)" stroke-dasharray="7 7" />
+            <text class="range-label" x="${targetX + targetW / 2}" y="27" text-anchor="middle" fill="#2f8d46" font-size="13" font-weight="800">${escapeHTML(lang.targetLegend)} ${formatNumber(lower, 1)}-${formatNumber(upper, 1)}</text>
+            <line class="range-line" pathLength="1" x1="${minX}" y1="${axisY}" x2="${maxX}" y2="${axisY}" stroke="#111827" stroke-width="3" stroke-linecap="round" />
+            <line class="range-marker" x1="${minX}" y1="${axisY - 14}" x2="${minX}" y2="${axisY + 14}" stroke="#111827" stroke-width="3" stroke-linecap="round" />
+            <line class="range-marker" x1="${maxX}" y1="${axisY - 14}" x2="${maxX}" y2="${axisY + 14}" stroke="#111827" stroke-width="3" stroke-linecap="round" />
+            <rect class="range-box" x="${q1X}" y="${axisY - 18}" width="${Math.max(7, q3X - q1X)}" height="36" rx="10" fill="rgba(10,132,255,0.17)" stroke="var(--blue)" stroke-width="3" />
+            <line class="range-marker" x1="${medX}" y1="${axisY - 25}" x2="${medX}" y2="${axisY + 25}" stroke="var(--blue)" stroke-width="4" stroke-linecap="round" />
+            ${dots}
+            <text class="range-label" x="${minX}" y="150" text-anchor="middle" fill="#6b7280" font-size="12" font-weight="700">Min ${formatNumber(stats.min, 2)}</text>
+            <text class="range-label" x="${medX}" y="150" text-anchor="middle" fill="var(--blue)" font-size="12" font-weight="800">Med ${formatNumber(stats.median, 2)}</text>
+            <text class="range-label" x="${maxX}" y="150" text-anchor="middle" fill="#6b7280" font-size="12" font-weight="700">Max ${formatNumber(stats.max, 2)}</text>
+        </svg>
     `;
-    statsLine.textContent = `Min ${formatNumber(stats.min, 2)} · Q1 ${formatNumber(stats.q1, 2)} · Med ${formatNumber(stats.median, 2)} · Q3 ${formatNumber(stats.q3, 2)} · Max ${formatNumber(stats.max, 2)}`;
+    statsLine.innerHTML = [
+        ["Min", stats.min],
+        ["Q1", stats.q1],
+        ["Med", stats.median],
+        ["Q3", stats.q3],
+        ["Max", stats.max]
+    ].map(([label, value]) => `<span>${label} ${formatNumber(value, 2)}</span>`).join("");
 }
 
 function renderDetail(entry) {
