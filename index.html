@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INR Tracker - Arzt-Viewer</title>
+    <title>INR Tracker - Doctor Viewer</title>
     <style>
         :root {
             color-scheme: dark;
@@ -86,6 +86,45 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 12px;
+        }
+
+        .landing-card {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .landing-card h2 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .landing-card .link-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .landing-card a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 36px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            color: var(--text);
+            text-decoration: none;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--line);
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        .privacy-note {
+            padding: 12px;
+            border-radius: 14px;
+            background: rgba(10,132,255,0.10);
+            border: 1px solid rgba(10,132,255,0.26);
         }
 
         label {
@@ -201,6 +240,30 @@
             font-size: 13px;
             line-height: 1.35;
             text-align: right;
+        }
+
+        .report-header-side {
+            display: grid;
+            justify-items: end;
+            gap: 12px;
+            min-width: 230px;
+        }
+
+        .report-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .report-actions button.secondary {
+            padding: 8px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            color: #ffffff;
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.18);
+            white-space: nowrap;
         }
 
         .report .card {
@@ -712,6 +775,23 @@
                 font-size: 12px;
             }
 
+            .report-header-side {
+                justify-items: start;
+                min-width: 0;
+                width: 100%;
+            }
+
+            .report-actions {
+                justify-content: flex-start;
+                width: 100%;
+            }
+
+            .report-actions button.secondary {
+                flex: 1;
+                min-width: 0;
+                padding-inline: 8px;
+            }
+
             .report .card {
                 padding: 12px;
             }
@@ -876,6 +956,41 @@
             .summary-grid { grid-template-columns: 1fr 1fr; }
             .distribution-grid { grid-template-columns: 1fr 1fr; }
         }
+
+        @media print {
+            :root { color-scheme: light; }
+            html, body {
+                background: #ffffff !important;
+                overflow: visible;
+            }
+            main {
+                width: 100%;
+                padding: 0;
+            }
+            header,
+            #landingInfo,
+            #decodeSection,
+            .report-actions,
+            .chart-controls {
+                display: none !important;
+            }
+            .report {
+                display: block !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: 0;
+                border-radius: 0;
+                box-shadow: none;
+                background: #ffffff;
+            }
+            .report .card {
+                break-inside: avoid;
+                box-shadow: none;
+            }
+            .report-header {
+                break-inside: avoid;
+            }
+        }
     </style>
 </head>
 <body>
@@ -883,33 +998,47 @@
     <header>
         <div>
             <h1 id="ui-title">INR Tracker</h1>
-            <p id="ui-subtitle">Lokaler Arzt-Viewer</p>
+            <p id="ui-subtitle">Local doctor viewer</p>
         </div>
-        <div class="badge" id="ui-local-badge">Lokal im Browser</div>
+        <div class="badge" id="ui-local-badge">Local in browser</div>
     </header>
+
+    <section class="card landing-card" id="landingInfo">
+        <h2>Open source, local, no backend</h2>
+        <p class="privacy-note">
+            This viewer is a static GitHub Pages file. The INR data is encrypted by the iOS app and decrypted locally in your browser only after the access code is entered. No patient data is uploaded to GitHub, stored in a database, or sent to a backend server.
+        </p>
+        <p>
+            The source code is public for transparency. Medical practices can inspect what the page does before using it.
+        </p>
+        <div class="link-row">
+            <a href="https://github.com/inrtracker/inrtracker.github.io" target="_blank" rel="noopener noreferrer">GitHub source</a>
+            <a href="https://inrtracker.github.io" target="_blank" rel="noopener noreferrer">Live viewer</a>
+        </div>
+    </section>
 
     <section class="card" id="decodeSection">
         <div class="decode-card">
             <div>
-                <h2 id="ui-decode-title">Daten entschlüsseln</h2>
-                <p id="ui-decode-desc">Diese Seite entschlüsselt den QR-Code lokal im Browser. Es werden keine Patientendaten an einen Server gesendet.</p>
+                <h2 id="ui-decode-title">Decrypt data</h2>
+                <p id="ui-decode-desc">This page decrypts the QR code locally in the browser. No patient data is sent to a server.</p>
             </div>
             <div class="row">
-                <button class="secondary" id="clearButton" type="button">Zurücksetzen</button>
+                <button class="secondary" id="clearButton" type="button">Reset</button>
             </div>
             <div id="scanNotice" class="scan-notice hidden">
-                <strong id="ui-scan-title">QR-Code erkannt</strong>
-                <span id="ui-scan-desc">Bitte Freigabecode eingeben. Die Daten werden nur lokal im Browser entschlüsselt.</span>
+                <strong id="ui-scan-title">QR code detected</strong>
+                <span id="ui-scan-desc">Please enter the access code. The data is decrypted locally in the browser only.</span>
             </div>
             <div id="payloadField">
-                <label for="payloadInput" id="ui-payload-label">QR-Daten</label>
+                <label for="payloadInput" id="ui-payload-label">QR data</label>
                 <textarea id="payloadInput" autocomplete="off" spellcheck="false"></textarea>
             </div>
             <div>
-                <label for="codeInput" id="ui-code-label">Freigabecode</label>
+                <label for="codeInput" id="ui-code-label">Access code</label>
                 <input id="codeInput" type="password" inputmode="numeric" autocomplete="one-time-code">
             </div>
-            <button id="decryptButton" type="button">Entschlüsseln</button>
+            <button id="decryptButton" type="button">Decrypt</button>
             <div id="status" class="status"></div>
         </div>
     </section>
@@ -917,26 +1046,33 @@
     <section id="viewer" class="report hidden" style="margin-top: 14px;">
         <div class="report-header">
             <div>
-                <div class="report-title" id="reportTitle">INR Protokoll</div>
-                <p id="periodTitle">Zeitraum</p>
+                <div class="report-title" id="reportTitle">INR report</div>
+                <p id="periodTitle">Period</p>
             </div>
-            <div class="report-meta" id="metaLine"></div>
+            <div class="report-header-side">
+                <div class="report-meta" id="metaLine"></div>
+                <div class="report-actions">
+                    <button class="secondary" id="exportPdfButton" type="button">Export PDF</button>
+                    <button class="secondary" id="printButton" type="button">Print</button>
+                    <button class="secondary" id="logoutButton" type="button">Logout</button>
+                </div>
+            </div>
         </div>
 
         <div class="grid">
         <section class="card">
-            <div class="section-title" id="ui-patient-therapy-title">1. Patienten- und Therapiedaten</div>
+            <div class="section-title" id="ui-patient-therapy-title">1. Patient and therapy data</div>
             <div class="info-grid">
                 <div class="info-block">
-                    <h3 id="ui-basic-data">Basisdaten</h3>
+                    <h3 id="ui-basic-data">Basic data</h3>
                     <div id="patientInfo"></div>
                 </div>
                 <div class="info-block">
-                    <h3 id="ui-therapy-data">Therapiedaten</h3>
+                    <h3 id="ui-therapy-data">Therapy data</h3>
                     <div id="therapyInfo"></div>
                 </div>
                 <div class="info-block" style="grid-column: 1 / -1;">
-                    <h3 id="ui-additional-medical">Weitere medizinische Angaben</h3>
+                    <h3 id="ui-additional-medical">Additional medical information</h3>
                     <div id="additionalInfo"></div>
                 </div>
             </div>
@@ -944,22 +1080,22 @@
 
         <section class="card">
             <div class="row" style="justify-content: space-between; margin-bottom: 10px;">
-                <div class="section-title" id="ui-summary-title" style="margin-bottom: 0;">2. Messzusammenfassung</div>
+                <div class="section-title" id="ui-summary-title" style="margin-bottom: 0;">2. Measurement summary</div>
                 <span class="pill" id="entryCount"></span>
             </div>
             <div class="summary-grid" id="summaryRows"></div>
         </section>
 
         <section class="card">
-            <div class="section-title" id="ui-chart-section-title">3. Kennwerte und Diagramme</div>
+            <div class="section-title" id="ui-chart-section-title">3. Key figures and charts</div>
             <section class="metrics" id="metrics"></section>
         </section>
 
         <section class="card">
             <div class="row" style="justify-content: space-between; margin-bottom: 12px;">
                 <div>
-                    <h2 id="ui-chart-title">INR-Verlaufskurve</h2>
-                    <p id="ui-chart-desc">Zum Verschieben seitlich über das Diagramm wischen. Punkte antippen für Details.</p>
+                    <h2 id="ui-chart-title">INR trend curve</h2>
+                    <p id="ui-chart-desc">Swipe sideways on the chart to move. Tap points for details.</p>
                 </div>
             </div>
             <div class="chart-wrap">
@@ -968,7 +1104,7 @@
                     <div class="seg">
                         <button type="button" data-window="14">14</button>
                         <button type="button" data-window="30">30</button>
-                        <button type="button" data-window="all">Alle</button>
+                        <button type="button" data-window="all">All</button>
                     </div>
                     <div class="row">
                         <button class="secondary" id="prevButton" type="button">‹</button>
@@ -978,21 +1114,21 @@
             </div>
             <div class="legend">
                 <span><i class="swatch" style="background: var(--blue);"></i>INR</span>
-                <span><i class="swatch" style="background: rgba(48,209,88,0.35);"></i><span id="ui-target-legend">Zielbereich</span></span>
-                <span><i class="swatch" style="background: var(--orange);"></i><span id="ui-dose-legend">Dosis</span></span>
-                <span><i class="swatch" style="background: var(--red);"></i><span id="ui-out-legend">Außerhalb</span></span>
+                <span><i class="swatch" style="background: rgba(48,209,88,0.35);"></i><span id="ui-target-legend">Target range</span></span>
+                <span><i class="swatch" style="background: var(--orange);"></i><span id="ui-dose-legend">Dose</span></span>
+                <span><i class="swatch" style="background: var(--red);"></i><span id="ui-out-legend">Out of range</span></span>
             </div>
         </section>
 
         <section class="card">
-            <div class="section-title" id="ui-distribution-title">Verteilung und Boxplot</div>
+            <div class="section-title" id="ui-distribution-title">Distribution and INR range</div>
             <div class="distribution-grid">
                 <div class="donut-row">
                     <div class="donut" id="distributionDonut" aria-hidden="true"></div>
                     <div class="legend" id="distributionLegend"></div>
                 </div>
                 <div class="boxplot">
-                    <h3 id="ui-boxplot-title">INR-Spannweite</h3>
+                    <h3 id="ui-boxplot-title">INR range</h3>
                     <div class="box-axis" id="boxAxis"></div>
                     <p class="box-stats" id="boxStats"></p>
                 </div>
@@ -1000,22 +1136,22 @@
         </section>
 
         <section class="card hidden" id="detailCard">
-            <h2 id="ui-detail-title">Messpunkt</h2>
+            <h2 id="ui-detail-title">Reading</h2>
             <div class="detail" id="detailContent"></div>
         </section>
 
         <section class="card">
-            <div class="section-title" id="ui-table-title">4. Protokolleinträge</div>
+            <div class="section-title" id="ui-table-title">4. Log entries</div>
             <div style="overflow:auto;">
                 <table>
                     <thead>
                     <tr>
-                        <th id="thDate">Datum</th>
+                        <th id="thDate">Date</th>
                         <th>INR</th>
-                        <th id="thTarget">Zielbereich</th>
-                        <th id="thDose">Dosis</th>
+                        <th id="thTarget">Target range</th>
+                        <th id="thDose">Dose</th>
                         <th id="thStatus">Status</th>
-                        <th id="thNotes">Notizen / Vorkommnisse</th>
+                        <th id="thNotes">Notes / events</th>
                     </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -1044,6 +1180,9 @@ const translations = {
         codePlaceholder: "z. B. 1234567890",
         button: "Entschlüsseln",
         reset: "Zurücksetzen",
+        exportPdf: "PDF exportieren",
+        print: "Drucken",
+        logout: "Abmelden",
         missing: "Bitte QR-Daten und Freigabecode eingeben.",
         working: "Daten werden lokal entschlüsselt...",
         success: "Daten erfolgreich lokal entschlüsselt.",
@@ -1126,6 +1265,9 @@ const translations = {
         codePlaceholder: "e.g. 1234567890",
         button: "Decrypt",
         reset: "Reset",
+        exportPdf: "Export PDF",
+        print: "Print",
+        logout: "Logout",
         missing: "Please enter QR data and access code.",
         working: "Decrypting locally...",
         success: "Data successfully decrypted locally.",
@@ -1208,6 +1350,9 @@ const translations = {
         codePlaceholder: "p. ej. 1234567890",
         button: "Descifrar",
         reset: "Restablecer",
+        exportPdf: "Exportar PDF",
+        print: "Imprimir",
+        logout: "Cerrar sesión",
         missing: "Introduce datos QR y código de acceso.",
         working: "Descifrando localmente...",
         success: "Datos descifrados localmente.",
@@ -1290,6 +1435,9 @@ const translations = {
         codePlaceholder: "ex. 1234567890",
         button: "Déchiffrer",
         reset: "Réinitialiser",
+        exportPdf: "Exporter PDF",
+        print: "Imprimer",
+        logout: "Déconnexion",
         missing: "Saisir les données QR et le code d'accès.",
         working: "Déchiffrement local...",
         success: "Données déchiffrées localement.",
@@ -1372,6 +1520,9 @@ const translations = {
         codePlaceholder: "ex. 1234567890",
         button: "Decifrar",
         reset: "Redefinir",
+        exportPdf: "Exportar PDF",
+        print: "Imprimir",
+        logout: "Sair",
         missing: "Insira os dados QR e o código de acesso.",
         working: "Decifrando localmente...",
         success: "Dados decifrados localmente.",
@@ -1440,14 +1591,21 @@ const translations = {
     }
 };
 
-const languageCode = navigator.language.slice(0, 2);
-const lang = translations[languageCode] || translations.en;
+let currentLanguageCode = "en";
+let lang = translations.en;
 const kdfIterations = 150000;
 let decodedPayload = null;
 let chartState = { start: 0, size: 30, selectedIndex: null, dragStartX: null };
 
+function setLanguage(code) {
+    const normalized = String(code || "en").trim().slice(0, 2).toLowerCase();
+    currentLanguageCode = translations[normalized] ? normalized : "en";
+    lang = translations[currentLanguageCode];
+    document.documentElement.lang = currentLanguageCode;
+}
+
 function applyTranslations() {
-    document.documentElement.lang = translations[languageCode] ? languageCode : "en";
+    document.documentElement.lang = currentLanguageCode;
     setText("ui-title", lang.title);
     setText("ui-subtitle", lang.subtitle);
     setText("ui-local-badge", lang.local);
@@ -1475,6 +1633,9 @@ function applyTranslations() {
     setText("ui-chart-section-title", lang.chartSection);
     setText("ui-distribution-title", lang.distributionTitle);
     setText("ui-boxplot-title", lang.boxPlot);
+    setText("exportPdfButton", lang.exportPdf);
+    setText("printButton", lang.print);
+    setText("logoutButton", lang.logout);
     setText("thDate", lang.date);
     setText("thDose", lang.dose);
     setText("thStatus", lang.status);
@@ -1497,6 +1658,7 @@ function readPayloadFromFragment() {
         document.getElementById("payloadInput").value = payload;
         document.getElementById("payloadField").classList.add("hidden");
         document.getElementById("scanNotice").classList.remove("hidden");
+        document.getElementById("landingInfo").classList.add("hidden");
         setText("ui-decode-title", lang.readyTitle);
         setText("ui-decode-desc", lang.readyDesc);
         history.replaceState(null, "", window.location.pathname + window.location.search);
@@ -1607,6 +1769,9 @@ async function decryptPayload() {
         const plainBuffer = await inflateZlib(compressed);
         decodedPayload = JSON.parse(new TextDecoder().decode(plainBuffer));
         normalizePayload(decodedPayload);
+        chartState = { start: 0, size: 30, selectedIndex: null, dragStartX: null };
+        setLanguage(decodedPayload.la || decodedPayload.lang || decodedPayload.locale || navigator.language.slice(0, 2));
+        applyTranslations();
         showStatus(lang.success, "ok");
         renderViewer();
     } catch (error) {
@@ -1671,6 +1836,7 @@ function renderViewer() {
     renderChart();
     renderDistribution(entries, lower, upper);
     renderTable(entries);
+    document.getElementById("landingInfo").classList.add("hidden");
     document.getElementById("decodeSection").classList.add("hidden");
 }
 
@@ -2163,7 +2329,7 @@ function parseDose(value) {
 }
 
 function formatNumber(value, digits) {
-    return new Intl.NumberFormat(navigator.language, {
+    return new Intl.NumberFormat(currentLanguageCode, {
         minimumFractionDigits: digits,
         maximumFractionDigits: digits
     }).format(value);
@@ -2171,17 +2337,17 @@ function formatNumber(value, digits) {
 
 function formatDate(value) {
     const date = new Date(`${value}T00:00:00`);
-    return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(navigator.language, { dateStyle: "medium" }).format(date);
+    return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(currentLanguageCode, { dateStyle: "medium" }).format(date);
 }
 
 function shortDate(value) {
     const date = new Date(`${value}T00:00:00`);
-    return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(navigator.language, { day: "2-digit", month: "2-digit" }).format(date);
+    return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(currentLanguageCode, { day: "2-digit", month: "2-digit" }).format(date);
 }
 
 function formatDateTime(value) {
     const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? (value || lang.noValue) : new Intl.DateTimeFormat(navigator.language, { dateStyle: "medium", timeStyle: "short" }).format(date);
+    return Number.isNaN(date.getTime()) ? (value || lang.noValue) : new Intl.DateTimeFormat(currentLanguageCode, { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
 
 function escapeHTML(value) {
@@ -2194,22 +2360,40 @@ function escapeHTML(value) {
     }[char]));
 }
 
+function resetViewer() {
+    decodedPayload = null;
+    chartState = { start: 0, size: 30, selectedIndex: null, dragStartX: null };
+    setLanguage("en");
+    applyTranslations();
+    document.getElementById("payloadInput").value = "";
+    document.getElementById("codeInput").value = "";
+    document.getElementById("payloadField").classList.remove("hidden");
+    document.getElementById("scanNotice").classList.add("hidden");
+    document.getElementById("viewer").classList.add("hidden");
+    document.getElementById("detailCard").classList.add("hidden");
+    document.getElementById("landingInfo").classList.remove("hidden");
+    document.getElementById("decodeSection").classList.remove("hidden");
+    showStatus("", "");
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+}
+
+function printReport() {
+    window.print();
+}
+
+function exportPDF() {
+    window.print();
+}
+
 function wireEvents() {
     document.getElementById("decryptButton").addEventListener("click", decryptPayload);
     document.getElementById("codeInput").addEventListener("keydown", event => {
         if (event.key === "Enter") decryptPayload();
     });
-    document.getElementById("clearButton").addEventListener("click", () => {
-        document.getElementById("payloadInput").value = "";
-        document.getElementById("codeInput").value = "";
-        document.getElementById("payloadField").classList.remove("hidden");
-        document.getElementById("scanNotice").classList.add("hidden");
-        setText("ui-decode-title", lang.decodeTitle);
-        setText("ui-decode-desc", lang.decodeDesc);
-        document.getElementById("viewer").classList.add("hidden");
-        document.getElementById("decodeSection").classList.remove("hidden");
-        showStatus("", "");
-    });
+    document.getElementById("clearButton").addEventListener("click", resetViewer);
+    document.getElementById("logoutButton").addEventListener("click", resetViewer);
+    document.getElementById("printButton").addEventListener("click", printReport);
+    document.getElementById("exportPdfButton").addEventListener("click", exportPDF);
     document.getElementById("prevButton").addEventListener("click", () => shiftChart(-1));
     document.getElementById("nextButton").addEventListener("click", () => shiftChart(1));
     document.querySelectorAll("[data-window]").forEach(button => {
