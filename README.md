@@ -8,21 +8,33 @@ The safety of patient data is our top priority. This web application operates on
 
 - **No Server Processing:** This page does not communicate with any backend server. No medical data is sent, stored, or logged anywhere on the internet.
 - **Local Decryption:** All decryption (AES-GCM) happens directly within the memory (RAM) of your browser.
+- **Time-Limited Access:** Each QR code contains an embedded, encrypted timestamp. During decryption, the web tool validates this timestamp against the current system time. **If the code is older than 24 hours, the tool automatically refuses to decrypt the data.** This security feature works entirely offline and client-side, ensuring that access expires after 24 hours without requiring any server-side database or tracking.
 - **GDPR Compliant:** Since no data leaves the browser, this tool is fully compliant with GDPR/DSGVO standards.
 
 ## 🚀 How to use
 
-1. **Input:** Paste the text derived from the QR code (provided by the patient) into the decoder input field.
-2. **Decrypt:** Enter the 4-digit PIN set by the patient in the app.
-3. **View:** The data is decrypted instantly and displayed directly in the browser.
+There are two ways to decrypt and view the patient's INR data:
+
+1. **Option A: Scanning the QR Code (Direct)**
+   - Scan the patient's QR code (e.g., directly from the app screen).
+   - The web tool will automatically recognize the code and display an input field for the 8-digit PIN.
+   - Enter the PIN provided by the patient to decrypt and view the data.
+
+2. **Option B: Manual Input (Remote)**
+   - Open this web tool manually in your browser.
+   - If the patient has provided the encrypted data text (ID) and the 8-digit, paste the text into the designated input field.
+   - Enter the 8-digit PIN and click the decrypt button to view the data.
+
+*Note: For security reasons, every QR code includes an encrypted timestamp and is valid for 24 hours only. After this period, the data cannot be decrypted.*
+
 
 ## 🛠 Technical Implementation
 
 To ensure the highest level of security, the data is encrypted using industry-standard protocols:
 
 - **Algorithm:** AES-GCM (256-bit)
-- **Key Derivation:** PBKDF2 with SHA-256 (100,000 iterations)
-- **Structure:** `[12 Bytes Nonce] + [Ciphertext] + [16 Bytes Tag]`
+- **Key Derivation:** PBKDF2 with SHA-256
+- 
 
 ## ⚖️ Transparency
 
