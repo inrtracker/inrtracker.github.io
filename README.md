@@ -30,3 +30,11 @@ This project is open-source. We believe in transparency, especially regarding he
 
 ---
 *Disclaimer: This tool is intended for medical professionals to view patient-provided data. Please verify patient data with official lab reports if necessary.*
+
+<p align="center">
+  <a href="https://apps.apple.com/de/app/inr-tracker/id6747362112">
+    <img src="Download_on_the_App_Store_Badge_DE.svg" 
+         alt="Download on the App Store" 
+         width="180">
+  </a>
+</p>
