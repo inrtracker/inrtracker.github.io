@@ -24,8 +24,8 @@ There are two ways to decrypt and view the patient's INR data:
 
 2. **Option B: Manual Input (Remote)**
    - Open this web tool manually in your browser.
-   - If the patient has provided the encrypted data text (ID) and the 8-digit, paste the text into the designated input field.
-   - Enter the 8-digit PIN and click the decrypt button to view the data.
+   - If the patient has provided the encrypted data text (ID), paste the text into the designated input field.
+   - Enter the 10-digit PIN and click the decrypt button to view the data.
 
 *Note: For security reasons, every QR code includes an encrypted timestamp and is valid for 24 hours only. After this period, the data cannot be decrypted.*
 
