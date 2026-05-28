@@ -19,7 +19,7 @@ There are two ways to decrypt and view the patient's INR data:
 
 1. **Option A: Scanning the QR Code (Direct)**
    - Scan the patient's QR code (e.g., directly from the app screen).
-   - The web tool will automatically recognize the code and display an input field for the 8-digit PIN.
+   - The web tool will automatically recognize the code and display an input field for the 10-digit PIN.
    - Enter the PIN provided by the patient to decrypt and view the data.
 
 2. **Option B: Manual Input (Remote)**
