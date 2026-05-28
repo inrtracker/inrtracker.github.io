@@ -1187,6 +1187,7 @@ const translations = {
         working: "Daten werden lokal entschlüsselt...",
         success: "Daten erfolgreich lokal entschlüsselt.",
         error: "Entschlüsselung fehlgeschlagen. Bitte Code und QR-Daten prüfen.",
+        expired: "Dieser QR-Code ist abgelaufen. Bitte in der App einen neuen Arzt-QR-Code öffnen.",
         unsupported: "Dieser Browser unterstützt die lokale Entpackung nicht. Bitte aktuellen Safari, Chrome oder Edge verwenden.",
         period: "Zeitraum",
         entries: "Einträge",
@@ -1272,6 +1273,7 @@ const translations = {
         working: "Decrypting locally...",
         success: "Data successfully decrypted locally.",
         error: "Decryption failed. Please check code and QR data.",
+        expired: "This QR code has expired. Please open a new doctor QR code in the app.",
         unsupported: "This browser does not support local decompression. Please use current Safari, Chrome, or Edge.",
         period: "Period",
         entries: "entries",
@@ -1357,6 +1359,7 @@ const translations = {
         working: "Descifrando localmente...",
         success: "Datos descifrados localmente.",
         error: "No se pudo descifrar. Comprueba código y datos QR.",
+        expired: "Este código QR ha caducado. Abre un nuevo QR médico en la app.",
         unsupported: "Este navegador no admite la descompresión local. Usa Safari, Chrome o Edge actual.",
         period: "Periodo",
         entries: "entradas",
@@ -1442,6 +1445,7 @@ const translations = {
         working: "Déchiffrement local...",
         success: "Données déchiffrées localement.",
         error: "Échec du déchiffrement. Vérifier le code et les données QR.",
+        expired: "Ce QR a expiré. Ouvrez un nouveau QR médecin dans l'app.",
         unsupported: "Ce navigateur ne prend pas en charge la décompression locale. Utiliser Safari, Chrome ou Edge récent.",
         period: "Période",
         entries: "entrées",
@@ -1527,6 +1531,7 @@ const translations = {
         working: "Decifrando localmente...",
         success: "Dados decifrados localmente.",
         error: "Falha ao decifrar. Verifique código e dados QR.",
+        expired: "Este QR expirou. Abra um novo QR médico no app.",
         unsupported: "Este navegador não suporta descompressão local. Use Safari, Chrome ou Edge atual.",
         period: "Período",
         entries: "entradas",
@@ -1772,6 +1777,14 @@ async function decryptPayload() {
         chartState = { start: 0, size: 30, selectedIndex: null, dragStartX: null };
         setLanguage(decodedPayload.la || decodedPayload.lang || decodedPayload.locale || navigator.language.slice(0, 2));
         applyTranslations();
+        if (payloadExpired(decodedPayload)) {
+            decodedPayload = null;
+            document.getElementById("viewer").classList.add("hidden");
+            document.getElementById("decodeSection").classList.remove("hidden");
+            document.getElementById("landingInfo").classList.add("hidden");
+            showStatus(lang.expired, "error");
+            return;
+        }
         showStatus(lang.success, "ok");
         renderViewer();
     } catch (error) {
@@ -1805,6 +1818,12 @@ function normalizePayload(payload) {
             minorBleeding: entry.mb === true
         }))
         .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+function payloadExpired(payload) {
+    if (!payload?.exp) return false;
+    const expiresAt = new Date(payload.exp);
+    return !Number.isNaN(expiresAt.getTime()) && Date.now() > expiresAt.getTime();
 }
 
 function showStatus(message, type) {
