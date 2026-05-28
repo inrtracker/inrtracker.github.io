@@ -33,7 +33,7 @@ This project is open-source. We believe in transparency, especially regarding he
 
 <p align="center">
   <a href="https://apps.apple.com/de/app/inr-tracker/id6747362112">
-    <img src="Download_on_the_App_Store_Badge_DE.svg" 
+    <img src="Badge Apple.svg" 
          alt="Download on the App Store" 
          width="180">
   </a>
