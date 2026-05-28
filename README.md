@@ -2,7 +2,8 @@
 
 This repository contains the source code for the **INR-Tracker Web Decoder**. This tool allows medical professionals to view INR data exported from the INR-Tracker iOS app in a secure, privacy-focused manner.
 
-## 🔒 Privacy & Security (Zero-Knowledge)
+
+## 🔒 Privacy & Security
 
 The safety of patient data is our top priority. This web application operates on a **strictly local, client-side** basis:
 
@@ -10,6 +11,7 @@ The safety of patient data is our top priority. This web application operates on
 - **Local Decryption:** All decryption (AES-GCM) happens directly within the memory (RAM) of your browser.
 - **Time-Limited Access:** Each QR code contains an embedded, encrypted timestamp. During decryption, the web tool validates this timestamp against the current system time. **If the code is older than 24 hours, the tool automatically refuses to decrypt the data.** This security feature works entirely offline and client-side, ensuring that access expires after 24 hours without requiring any server-side database or tracking.
 - **GDPR Compliant:** Since no data leaves the browser, this tool is fully compliant with GDPR/DSGVO standards.
+
 
 ## 🚀 How to use
 
@@ -34,7 +36,7 @@ To ensure the highest level of security, the data is encrypted using industry-st
 
 - **Algorithm:** AES-GCM (256-bit)
 - **Key Derivation:** PBKDF2 with SHA-256
-- 
+  
 
 ## ⚖️ Transparency
 
