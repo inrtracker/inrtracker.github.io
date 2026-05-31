@@ -1676,7 +1676,6 @@
 
         .patient-card { grid-column: span 6; }
         .summary-card { grid-column: span 6; }
-        .metrics-card,
         .trend-card,
         .table-card { grid-column: 1 / -1; }
         .distribution-card { grid-column: 1 / -1; }
@@ -1954,6 +1953,7 @@
 
         .donut-chart-shell canvas {
             height: 250px !important;
+            touch-action: manipulation;
         }
 
         .box-axis {
@@ -2020,6 +2020,45 @@
         .donut-center span {
             color: var(--muted);
             font-size: 11px;
+        }
+
+        .distribution-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: min(100%, 360px);
+            min-height: 58px;
+            padding: 12px 14px;
+            border: 1px solid rgba(35, 52, 67, 0.10);
+            border-radius: 16px;
+            background: #f8fafc;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 760;
+        }
+
+        .distribution-detail-dot {
+            flex: 0 0 auto;
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            box-shadow: 0 0 0 5px rgba(19, 119, 199, 0.10);
+        }
+
+        .distribution-detail strong,
+        .distribution-detail span {
+            display: block;
+        }
+
+        .distribution-detail strong {
+            color: var(--ink);
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+        .distribution-detail span {
+            margin-top: 2px;
+            line-height: 1.35;
         }
 
         .inline-detail,
@@ -2191,7 +2230,6 @@
 
             .patient-card,
             .summary-card,
-            .metrics-card,
             .trend-card,
             .distribution-card,
             .detail-card,
@@ -2306,7 +2344,6 @@
             </label>
         </div>
         <div class="report-actions top-report-actions" aria-label="Report actions">
-            <button class="secondary" id="exportPdfButton" type="button">Export PDF</button>
             <button class="secondary" id="printButton" type="button">Print</button>
             <button class="secondary" id="logoutButton" type="button">Logout</button>
         </div>
@@ -2455,11 +2492,6 @@
             <div class="summary-grid" id="summaryRows"></div>
         </section>
 
-        <section class="card metrics-card">
-            <div class="section-title" id="ui-chart-section-title">3. Key figures and charts</div>
-            <section class="metrics" id="metrics"></section>
-        </section>
-
         <section class="card trend-card" id="trendPanel">
             <div class="row" style="justify-content: space-between; margin-bottom: 12px;">
                 <div>
@@ -2501,6 +2533,7 @@
                         <canvas id="distributionChart" role="img" aria-label="INR distribution chart"></canvas>
                         <div class="donut-center" id="distributionCenter" aria-hidden="true"></div>
                     </div>
+                    <div class="distribution-detail" id="distributionDetail"></div>
                     <div class="legend" id="distributionLegend"></div>
                 </div>
                 <div class="boxplot">
@@ -2604,7 +2637,6 @@ const translations = {
         codePlaceholder: "z. B. 1234567890",
         button: "Entschlüsseln",
         reset: "Zurücksetzen",
-        exportPdf: "PDF exportieren",
         print: "Drucken",
         logout: "Abmelden",
         missing: "Bitte QR-Daten und Freigabecode eingeben.",
@@ -2618,7 +2650,7 @@ const translations = {
         generated: "Erstellt",
         medication: "Medikament",
         target: "Zielbereich",
-        chartTitle: "INR-Verlaufskurve",
+        chartTitle: "3. INR-Verlaufskurve",
         chartDesc: "Punkte antippen oder mit der Maus darüberfahren. Seitlich wischen verschiebt den Zeitraum.",
         targetLegend: "Zielbereich",
         doseLegend: "Dosis",
@@ -2647,12 +2679,12 @@ const translations = {
         intolerances: "Unverträglichkeiten",
         preexisting: "Vorerkrankungen",
         measurementSummary: "2. Messzusammenfassung",
-        chartSection: "3. Kennwerte und Diagramme",
         lastINR: "Letzter INR",
         averageINR: "Durchschnitt",
         stability: "Stabilität",
         trend: "Trend",
         distributionTitle: "Verteilung und INR-Spannweite",
+        distributionOverview: "Verteilungsübersicht",
         boxPlot: "INR Box Plot",
         targetStatus: "Zielbereich",
         notes: "Notizen / Vorkommnisse",
@@ -2721,7 +2753,6 @@ const translations = {
         codePlaceholder: "e.g. 1234567890",
         button: "Decrypt",
         reset: "Reset",
-        exportPdf: "Export PDF",
         print: "Print",
         logout: "Logout",
         missing: "Please enter QR data and access code.",
@@ -2735,7 +2766,7 @@ const translations = {
         generated: "Generated",
         medication: "Medication",
         target: "Target range",
-        chartTitle: "INR trend curve",
+        chartTitle: "3. INR trend curve",
         chartDesc: "Tap points or hover with the mouse. Swipe sideways to move the period.",
         targetLegend: "Target range",
         doseLegend: "Dose",
@@ -2764,12 +2795,12 @@ const translations = {
         intolerances: "Intolerances",
         preexisting: "Pre-existing conditions",
         measurementSummary: "2. Measurement summary",
-        chartSection: "3. Key figures and charts",
         lastINR: "Last INR",
         averageINR: "Average",
         stability: "Stability",
         trend: "Trend",
         distributionTitle: "Distribution and INR range",
+        distributionOverview: "Distribution overview",
         boxPlot: "INR Box Plot",
         targetStatus: "Target range",
         notes: "Notes / events",
@@ -2838,7 +2869,6 @@ const translations = {
         codePlaceholder: "p. ej. 1234567890",
         button: "Descifrar",
         reset: "Restablecer",
-        exportPdf: "Exportar PDF",
         print: "Imprimir",
         logout: "Cerrar sesión",
         missing: "Introduce datos QR y código de acceso.",
@@ -2852,7 +2882,7 @@ const translations = {
         generated: "Creado",
         medication: "Medicamento",
         target: "Rango objetivo",
-        chartTitle: "Curva INR",
+        chartTitle: "3. Curva INR",
         chartDesc: "Toca puntos o pasa el ratón. Desliza lateralmente para mover el periodo.",
         targetLegend: "Rango objetivo",
         doseLegend: "Dosis",
@@ -2881,12 +2911,12 @@ const translations = {
         intolerances: "Intolerancias",
         preexisting: "Antecedentes",
         measurementSummary: "2. Resumen de mediciones",
-        chartSection: "3. Indicadores y gráficos",
         lastINR: "Último INR",
         averageINR: "Promedio",
         stability: "Estabilidad",
         trend: "Tendencia",
         distributionTitle: "Distribución y rango INR",
+        distributionOverview: "Resumen de distribución",
         boxPlot: "INR Box Plot",
         targetStatus: "Rango objetivo",
         notes: "Notas / eventos",
@@ -2955,7 +2985,6 @@ const translations = {
         codePlaceholder: "ex. 1234567890",
         button: "Déchiffrer",
         reset: "Réinitialiser",
-        exportPdf: "Exporter PDF",
         print: "Imprimer",
         logout: "Déconnexion",
         missing: "Saisir les données QR et le code d'accès.",
@@ -2969,7 +2998,7 @@ const translations = {
         generated: "Créé",
         medication: "Médicament",
         target: "Zone cible",
-        chartTitle: "Courbe INR",
+        chartTitle: "3. Courbe INR",
         chartDesc: "Touchez les points ou survolez à la souris. Balayez pour déplacer la période.",
         targetLegend: "Zone cible",
         doseLegend: "Dose",
@@ -2998,12 +3027,12 @@ const translations = {
         intolerances: "Intolérances",
         preexisting: "Antécédents",
         measurementSummary: "2. Résumé des mesures",
-        chartSection: "3. Indicateurs et graphiques",
         lastINR: "Dernier INR",
         averageINR: "Moyenne",
         stability: "Stabilité",
         trend: "Tendance",
         distributionTitle: "Distribution et amplitude INR",
+        distributionOverview: "Vue d'ensemble de la distribution",
         boxPlot: "INR Box Plot",
         targetStatus: "Zone cible",
         notes: "Notes / événements",
@@ -3072,7 +3101,6 @@ const translations = {
         codePlaceholder: "ex. 1234567890",
         button: "Decifrar",
         reset: "Redefinir",
-        exportPdf: "Exportar PDF",
         print: "Imprimir",
         logout: "Sair",
         missing: "Insira os dados QR e o código de acesso.",
@@ -3086,7 +3114,7 @@ const translations = {
         generated: "Criado",
         medication: "Medicamento",
         target: "Faixa-alvo",
-        chartTitle: "Curva INR",
+        chartTitle: "3. Curva INR",
         chartDesc: "Toque nos pontos ou passe o rato. Deslize lateralmente para mover o período.",
         targetLegend: "Faixa-alvo",
         doseLegend: "Dose",
@@ -3115,12 +3143,12 @@ const translations = {
         intolerances: "Intolerâncias",
         preexisting: "Condições pré-existentes",
         measurementSummary: "2. Resumo das medições",
-        chartSection: "3. Indicadores e gráficos",
         lastINR: "Último INR",
         averageINR: "Média",
         stability: "Estabilidade",
         trend: "Tendência",
         distributionTitle: "Distribuição e faixa INR",
+        distributionOverview: "Resumo da distribuição",
         boxPlot: "INR Box Plot",
         targetStatus: "Faixa-alvo",
         notes: "Notas / eventos",
@@ -3160,12 +3188,25 @@ let currentLanguageCode = "en";
 let lang = translations.en;
 const kdfIterations = 150000;
 let decodedPayload = null;
-let chartState = { start: 0, size: 30, selectedIndex: null, dragStartX: null };
-let distributionState = { selectedIndex: null };
+let chartState = createChartState();
+let distributionState = { selectedIndex: null, parts: [] };
 let tableFilterState = { target: "all", query: "" };
 let trendChart = null;
 let distributionChart = null;
 let boxPlotChart = null;
+
+function createChartState() {
+    return {
+        start: 0,
+        size: 30,
+        selectedIndex: null,
+        dragStartX: null,
+        dragStartY: null,
+        dragPointerId: null,
+        dragMoved: false,
+        suppressClick: false
+    };
+}
 
 const targetRangePlugin = {
     id: "targetRange",
@@ -3322,10 +3363,8 @@ function applyTranslations() {
     setText("ui-therapy-data", lang.therapyData);
     setText("ui-additional-medical", lang.additionalMedical);
     setText("ui-summary-title", lang.measurementSummary);
-    setText("ui-chart-section-title", lang.chartSection);
     setText("ui-distribution-title", lang.distributionTitle);
     setText("ui-boxplot-title", lang.boxPlot);
-    setText("exportPdfButton", lang.exportPdf);
     setText("printButton", lang.print);
     setText("logoutButton", lang.logout);
     setText("navOverview", lang.overview);
@@ -3473,8 +3512,8 @@ async function decryptPayload() {
         const plainBuffer = await inflateZlib(compressed);
         decodedPayload = JSON.parse(new TextDecoder().decode(plainBuffer));
         normalizePayload(decodedPayload);
-        chartState = { start: 0, size: 30, selectedIndex: null, dragStartX: null };
-        distributionState = { selectedIndex: null };
+        chartState = createChartState();
+        distributionState = { selectedIndex: null, parts: [] };
         tableFilterState = { target: "all", query: "" };
         setLanguage(decodedPayload.la || decodedPayload.lang || decodedPayload.locale || navigator.language.slice(0, 2));
         applyTranslations();
@@ -3554,7 +3593,6 @@ function renderViewer() {
 
     renderReportInfo(payload, lower, upper);
     renderSummary(entries, lower, upper, payload);
-    renderMetrics(entries, lower, upper, payload);
     renderChart();
     renderDistribution(entries, lower, upper);
     renderTable(entries);
@@ -3644,19 +3682,6 @@ function renderInsight(stats) {
     `;
 }
 
-function renderMetrics(entries, lower, upper, payload) {
-    const stats = computeStats(entries, lower, upper, payload);
-    const metrics = [
-        [lang.lastINR, stats.lastINRValue],
-        [lang.averageINR, stats.averageText],
-        ["TTR", stats.ttrText],
-        [lang.target, `${formatNumber(lower, 1)}-${formatNumber(upper, 1)}`]
-    ];
-    document.getElementById("metrics").innerHTML = metrics.map(([label, value]) => `
-        <div class="metric"><small>${escapeHTML(label)}</small><strong>${escapeHTML(value || lang.noValue)}</strong></div>
-    `).join("");
-}
-
 function infoRow(label, value) {
     return `<div class="info-row"><span>${escapeHTML(label)}:</span><span>${escapeHTML(value || lang.noValue)}</span></div>`;
 }
@@ -3702,6 +3727,7 @@ function renderChart() {
     const minY = Math.floor((Math.min(1, lower - 0.4, ...(values.length ? values : [lower])) - 0.1) * 10) / 10;
     const maxY = Math.ceil((Math.max(4, upper + 0.4, ...(values.length ? values : [upper])) + 0.35) * 10) / 10;
     const maxDose = Math.max(1, ...(doseValues.length ? doseValues : [1]));
+    const touchLike = isTouchLikeInput();
 
     if (!window.Chart) {
         showInlineChartMessage("Chart.js could not be loaded.");
@@ -3724,9 +3750,9 @@ function renderChart() {
                     borderWidth: 3,
                     tension: 0.35,
                     spanGaps: true,
-                    pointRadius: visible.map((entry, index) => chartState.selectedIndex === chartState.start + index ? 7 : 5),
-                    pointHoverRadius: 8,
-                    pointHitRadius: 12,
+                    pointRadius: visible.map((entry, index) => chartState.selectedIndex === chartState.start + index ? (touchLike ? 9 : 7) : (touchLike ? 6 : 5)),
+                    pointHoverRadius: touchLike ? 10 : 8,
+                    pointHitRadius: touchLike ? 28 : 16,
                     pointBorderWidth: visible.map((entry, index) => chartState.selectedIndex === chartState.start + index ? 3 : 0),
                     pointBorderColor: "#ffffff",
                     pointBackgroundColor: visible.map(entry => targetColor(entry.inr, lower, upper)),
@@ -3752,8 +3778,8 @@ function renderChart() {
             layout: {
                 padding: { top: 14, right: 8 }
             },
-            interaction: { mode: "nearest", intersect: true },
-            hover: { mode: "nearest", intersect: true },
+            interaction: { mode: "nearest", intersect: false },
+            hover: { mode: "nearest", intersect: false },
             events: ["mousemove", "mouseout", "click", "touchstart", "touchmove", "touchend"],
             scales: {
                 x: {
@@ -3833,7 +3859,7 @@ function renderChart() {
                 }
                 const point = getTrendPointAtEvent(chart, event, elements);
                 if (!point) return;
-                selectChartEntry(chartState.start + point.index);
+                selectChartEntry(chartState.start + point.index, { reveal: true });
             }
         }
     });
@@ -3854,7 +3880,50 @@ function getTrendPointAtEvent(chart, event, elements = null) {
     if (activePoint) return activePoint;
 
     const candidates = chart.getElementsAtEventForMode(event, "nearest", { intersect: true }, true);
-    return candidates.find(item => item.datasetIndex === 0) || null;
+    const intersectingPoint = candidates.find(item => item.datasetIndex === 0);
+    if (intersectingPoint) return intersectingPoint;
+
+    const native = event?.native || event;
+    const touch = native?.changedTouches?.[0] || native?.touches?.[0];
+    const clientX = native?.clientX ?? touch?.clientX;
+    const clientY = native?.clientY ?? touch?.clientY;
+    return getNearestTrendPointAtClientPosition(chart, clientX, clientY);
+}
+
+function isTouchLikeInput() {
+    return Boolean(window.matchMedia?.("(pointer: coarse)")?.matches || navigator.maxTouchPoints > 0 || "ontouchstart" in window);
+}
+
+function getTrendPointAtPointerEvent(event) {
+    if (!trendChart) return null;
+    return getNearestTrendPointAtClientPosition(trendChart, event.clientX, event.clientY, isTouchLikeInput() ? 46 : 24);
+}
+
+function getNearestTrendPointAtClientPosition(chart, clientX, clientY, maxDistance = null) {
+    if (clientX == null || clientY == null) return null;
+    const rect = chart.canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+
+    const x = (clientX - rect.left) * (chart.width / rect.width);
+    const y = (clientY - rect.top) * (chart.height / rect.height);
+    const radius = maxDistance ?? (isTouchLikeInput() ? 42 : 22);
+    const meta = chart.getDatasetMeta(0);
+    let best = null;
+    let bestDistance = Number.POSITIVE_INFINITY;
+
+    meta.data.forEach((element, index) => {
+        if (!element || chart.data.datasets[0].data[index] == null) return;
+        const dx = element.x - x;
+        const dy = element.y - y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < bestDistance) {
+            bestDistance = distance;
+            best = { datasetIndex: 0, index, element };
+        }
+    });
+
+    if (!best || bestDistance > radius) return null;
+    return best;
 }
 
 function updateChartWindowInfo() {
@@ -3882,24 +3951,23 @@ function renderDistribution(entries, lower, upper) {
     const high = values.filter(v => v > upper).length;
     const total = low + inRange + high;
     const legend = document.getElementById("distributionLegend");
-    const center = document.getElementById("distributionCenter");
     const canvas = document.getElementById("distributionChart");
+    const parts = [
+        { label: lang.targetLegend, value: inRange, color: "#30d158" },
+        { label: lang.low, value: low, color: "#ff9f0a" },
+        { label: lang.high, value: high, color: "#ff453a" }
+    ];
 
     if (!window.Chart) {
         legend.innerHTML = `<span>${escapeHTML(lang.noValue)}</span>`;
+        setDistributionOverview(total, parts);
         renderBoxPlot(values, lower, upper);
         return;
     }
 
     if (distributionChart) distributionChart.destroy();
     distributionState.selectedIndex = null;
-    setDistributionOverview(total);
-
-    const parts = [
-        { label: lang.targetLegend, value: inRange, color: "#30d158" },
-        { label: lang.low, value: low, color: "#ff9f0a" },
-        { label: lang.high, value: high, color: "#ff453a" }
-    ];
+    distributionState.parts = parts;
 
     legend.innerHTML = total
         ? parts.map((part, index) => legendItem(part.color, `${part.label}: ${part.value} (${formatNumber((part.value / total) * 100, 1)}%)`, index)).join("")
@@ -3914,7 +3982,9 @@ function renderDistribution(entries, lower, upper) {
                 backgroundColor: parts.map(part => part.color),
                 borderColor: "#ffffff",
                 borderWidth: 5,
-                hoverOffset: 12,
+                hoverOffset: 0,
+                hoverBorderColor: "#ffffff",
+                hoverBorderWidth: 5,
                 spacing: 2
             }]
         },
@@ -3924,26 +3994,19 @@ function renderDistribution(entries, lower, upper) {
             cutout: "58%",
             interaction: { mode: "nearest", intersect: true },
             hover: { mode: "nearest", intersect: true },
-            animation: { animateRotate: true, animateScale: true },
+            events: ["mousemove", "mouseout", "click", "touchstart"],
+            animation: { animateRotate: true, animateScale: false, duration: 360 },
+            transitions: {
+                active: { animation: { duration: 0 } }
+            },
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    displayColors: false,
-                    padding: 12,
-                    cornerRadius: 12,
-                    callbacks: {
-                        label(context) {
-                            const value = context.parsed || 0;
-                            const percent = total ? formatNumber((value / total) * 100, 1) : formatNumber(0, 1);
-                            return `${context.label}: ${value} (${percent}%)`;
-                        }
-                    }
+                    enabled: false
                 }
             },
             onHover(event, elements, chart) {
-                const shell = chart.canvas.closest(".donut-chart-shell");
                 chart.canvas.style.cursor = elements.length ? "pointer" : "default";
-                shell?.classList.toggle("segment-hovered", elements.length > 0);
                 if (elements.length) {
                     previewDistributionPart(parts[elements[0].index], total, elements[0].index);
                 } else {
@@ -3957,6 +4020,7 @@ function renderDistribution(entries, lower, upper) {
         }
     });
 
+    setDistributionOverview(total, parts);
     canvas.onpointerleave = () => restoreDistributionSelection(parts, total);
 
     legend.querySelectorAll("[data-dist]").forEach(item => {
@@ -4060,7 +4124,7 @@ function renderBoxPlot(values, lower, upper) {
     ].map(([label, value]) => `<span>${label} ${formatNumber(value, 2)}</span>`).join("");
 }
 
-function selectChartEntry(globalIndex) {
+function selectChartEntry(globalIndex, options = {}) {
     const entries = decodedPayload?.e || [];
     if (!entries[globalIndex]) return;
     ensureChartIndexVisible(globalIndex);
@@ -4068,6 +4132,7 @@ function selectChartEntry(globalIndex) {
     renderChart();
     renderDetail(entries[globalIndex]);
     markSelectedTableRow();
+    if (options.reveal) revealChartSelectionIfNeeded();
 }
 
 function ensureChartIndexVisible(globalIndex) {
@@ -4095,14 +4160,16 @@ function targetText(value, lower, upper) {
     return lang.targetLegend;
 }
 
-function setDistributionOverview(total) {
+function setDistributionOverview(total, parts = distributionState.parts || []) {
+    setDistributionCenter(total);
+    updateDistributionDetail(null, total, null, parts);
+    document.querySelectorAll("[data-dist]").forEach(item => item.classList.remove("active"));
+    tintDistributionSegments(null);
+}
+
+function setDistributionCenter(total) {
     const center = document.getElementById("distributionCenter");
     center.innerHTML = `<strong>${total}</strong><span>${escapeHTML(lang.entries)}</span>`;
-    document.querySelectorAll("[data-dist]").forEach(item => item.classList.remove("active"));
-    if (distributionChart) {
-        distributionChart.setActiveElements([]);
-        distributionChart.update("none");
-    }
 }
 
 function previewDistributionPart(part, total, index) {
@@ -4112,7 +4179,7 @@ function previewDistributionPart(part, total, index) {
 function restoreDistributionSelection(parts, total) {
     document.getElementById("distributionDonut")?.classList.remove("segment-hovered");
     if (distributionState.selectedIndex == null) {
-        setDistributionOverview(total);
+        setDistributionOverview(total, parts);
         return;
     }
     updateDistributionPartUI(parts[distributionState.selectedIndex], total, distributionState.selectedIndex);
@@ -4126,14 +4193,51 @@ function showDistributionPart(part, total, index) {
 
 function updateDistributionPartUI(part, total, index) {
     if (!part) return;
-    const center = document.getElementById("distributionCenter");
-    const percent = total ? formatNumber((part.value / total) * 100, 1) : formatNumber(0, 1);
-    center.innerHTML = `<strong>${part.value}</strong><span>${escapeHTML(part.label)} · ${percent}%</span>`;
+    setDistributionCenter(total);
+    updateDistributionDetail(part, total, index);
     document.querySelectorAll("[data-dist]").forEach(item => item.classList.toggle("active", Number(item.dataset.dist) === index));
+    tintDistributionSegments(index);
+}
+
+function updateDistributionDetail(part, total, index, parts = distributionState.parts || []) {
+    const detail = document.getElementById("distributionDetail");
+    if (!detail) return;
+
+    if (!part) {
+        const summary = total
+            ? parts.map(item => `${item.label}: ${item.value} (${formatNumber((item.value / total) * 100, 1)}%)`).join(" · ")
+            : lang.noValue;
+        detail.innerHTML = `
+            <i class="distribution-detail-dot" style="background: var(--teal);" aria-hidden="true"></i>
+            <div><strong>${escapeHTML(lang.distributionOverview)}</strong><span>${escapeHTML(summary)}</span></div>
+        `;
+        return;
+    }
+
+    const percent = total ? formatNumber((part.value / total) * 100, 1) : formatNumber(0, 1);
+    detail.innerHTML = `
+        <i class="distribution-detail-dot" style="background:${escapeHTML(part.color)};" aria-hidden="true"></i>
+        <div><strong>${escapeHTML(part.label)}</strong><span>${escapeHTML(part.value)} ${escapeHTML(lang.entries)} · ${escapeHTML(percent)}%</span></div>
+    `;
+}
+
+function tintDistributionSegments(index) {
     if (distributionChart) {
-        distributionChart.setActiveElements([{ datasetIndex: 0, index }]);
+        distributionChart.data.datasets[0].backgroundColor = distributionState.parts.map((part, partIndex) =>
+            index == null || partIndex === index ? part.color : colorWithAlpha(part.color, 0.26)
+        );
+        distributionChart.setActiveElements([]);
         distributionChart.update("none");
     }
+}
+
+function colorWithAlpha(hex, alpha) {
+    const clean = String(hex).replace("#", "");
+    if (clean.length !== 6) return hex;
+    const r = parseInt(clean.slice(0, 2), 16);
+    const g = parseInt(clean.slice(2, 4), 16);
+    const b = parseInt(clean.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function showInlineChartMessage(message) {
@@ -4180,6 +4284,15 @@ function renderDetail(entry) {
     `;
     inline.innerHTML = detailHTML;
     content.innerHTML = detailHTML;
+}
+
+function revealChartSelectionIfNeeded() {
+    if (!isTouchLikeInput()) return;
+    const selection = document.getElementById("chartSelection");
+    if (!selection || selection.classList.contains("hidden")) return;
+    requestAnimationFrame(() => {
+        selection.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
 }
 
 function renderTable(entries) {
@@ -4480,8 +4593,8 @@ function escapeHTML(value) {
 function resetViewer() {
     decodedPayload = null;
     document.body.classList.remove("viewer-open");
-    chartState = { start: 0, size: 30, selectedIndex: null, dragStartX: null };
-    distributionState = { selectedIndex: null };
+    chartState = createChartState();
+    distributionState = { selectedIndex: null, parts: [] };
     tableFilterState = { target: "all", query: "" };
     if (trendChart) { trendChart.destroy(); trendChart = null; }
     if (distributionChart) { distributionChart.destroy(); distributionChart = null; }
@@ -4507,10 +4620,6 @@ function printReport() {
     window.print();
 }
 
-function exportPDF() {
-    window.print();
-}
-
 function scrollToReportSection(id) {
     const target = document.getElementById(id);
     if (!target) return;
@@ -4533,7 +4642,6 @@ function wireEvents() {
     document.getElementById("clearButton").addEventListener("click", resetViewer);
     document.getElementById("logoutButton").addEventListener("click", resetViewer);
     document.getElementById("printButton").addEventListener("click", printReport);
-    document.getElementById("exportPdfButton").addEventListener("click", exportPDF);
     document.getElementById("prevButton").addEventListener("click", () => shiftChart(-1));
     document.getElementById("nextButton").addEventListener("click", () => shiftChart(1));
     document.querySelectorAll("[data-window]").forEach(button => {
@@ -4557,22 +4665,64 @@ function wireEvents() {
 
     const chartCanvas = document.getElementById("trendChart");
     chartCanvas.addEventListener("pointerdown", event => {
+        if (!trendChart) return;
         chartState.dragStartX = event.clientX;
+        chartState.dragStartY = event.clientY;
+        chartState.dragPointerId = event.pointerId;
+        chartState.dragMoved = false;
         chartState.suppressClick = false;
+        try {
+            chartCanvas.setPointerCapture?.(event.pointerId);
+        } catch (_) {}
     });
-    chartCanvas.addEventListener("pointerup", event => {
-        if (chartState.dragStartX == null) return;
-        const delta = event.clientX - chartState.dragStartX;
-        chartState.dragStartX = null;
-        if (Math.abs(delta) > 38) {
-            chartState.suppressClick = true;
-            shiftChart(delta < 0 ? 1 : -1);
+    chartCanvas.addEventListener("pointermove", event => {
+        if (chartState.dragStartX == null || chartState.dragStartY == null) return;
+        const deltaX = event.clientX - chartState.dragStartX;
+        const deltaY = event.clientY - chartState.dragStartY;
+        if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY) * 1.15) {
+            chartState.dragMoved = true;
+            event.preventDefault();
         }
+    }, { passive: false });
+    chartCanvas.addEventListener("pointerup", event => {
+        if (chartState.dragStartX == null || chartState.dragStartY == null) return;
+        const deltaX = event.clientX - chartState.dragStartX;
+        const deltaY = event.clientY - chartState.dragStartY;
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+        try {
+            chartCanvas.releasePointerCapture?.(chartState.dragPointerId ?? event.pointerId);
+        } catch (_) {}
+        chartState.dragStartX = null;
+        chartState.dragStartY = null;
+        chartState.dragPointerId = null;
+
+        if (absX > 42 && absX > absY * 1.15) {
+            chartState.dragMoved = false;
+            chartState.suppressClick = true;
+            shiftChart(deltaX < 0 ? 1 : -1);
+            return;
+        }
+
+        const point = getTrendPointAtPointerEvent(event);
+        const tapTolerance = isTouchLikeInput() ? 38 : 28;
+        if (point && absX < tapTolerance && absY < tapTolerance) {
+            chartState.dragMoved = false;
+            chartState.suppressClick = true;
+            selectChartEntry(chartState.start + point.index, { reveal: true });
+            return;
+        }
+
+        chartState.dragMoved = false;
     });
     chartCanvas.addEventListener("pointercancel", () => {
         chartState.dragStartX = null;
+        chartState.dragStartY = null;
+        chartState.dragPointerId = null;
+        chartState.dragMoved = false;
     });
     chartCanvas.addEventListener("pointerleave", () => {
+        if (chartState.dragStartX != null) return;
         chartCanvas.closest(".chart-wrap")?.classList.remove("point-hovered");
         chartCanvas.style.cursor = "grab";
     });
