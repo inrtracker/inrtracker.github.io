@@ -1316,7 +1316,8 @@
             height: auto;
         }
 
-        .expiry-note {
+        .expiry-note,
+        .language-note {
             display: grid;
             gap: 4px;
             padding: 12px 14px;
@@ -1326,12 +1327,20 @@
             border: 1px solid rgba(15, 118, 110, 0.18);
         }
 
-        .expiry-note strong {
+        .language-note {
+            color: #254764;
+            background: #eef6ff;
+            border-color: rgba(10, 132, 255, 0.18);
+        }
+
+        .expiry-note strong,
+        .language-note strong {
             color: var(--ink);
             font-size: 14px;
         }
 
-        .expiry-note span {
+        .expiry-note span,
+        .language-note span {
             color: var(--muted);
             font-size: 13px;
             line-height: 1.35;
@@ -2425,6 +2434,10 @@
             <div class="row">
                 <button class="secondary" id="clearButton" type="button">Reset</button>
             </div>
+            <div class="language-note">
+                <strong id="ui-language-note-title">Language</strong>
+                <span id="ui-language-note-desc">You can switch the website language manually at the top. After decryption, the QR code's stored language is applied.</span>
+            </div>
             <div id="scanNotice" class="scan-notice hidden">
                 <strong id="ui-scan-title">QR code detected</strong>
                 <span id="ui-scan-desc">Please enter the access code. The data is decrypted locally in the browser only.</span>
@@ -2625,6 +2638,8 @@ const translations = {
         landingSvgTimestamp: "QR-Zeitstempel + lokale Entschlüsselung",
         expiryTitle: "Freigabecode 24 Stunden gültig",
         expiryDesc: "Die 24-Stunden-Frist startet mit dem Zeitstempel, der in den QR-Daten gespeichert ist.",
+        languageNoteTitle: "Sprache",
+        languageNoteDesc: "Die Seite startet standardmäßig auf Englisch. Oben kann die Sprache jederzeit manuell gewechselt werden. Nach dem Entschlüsseln übernimmt die Seite die im QR-Code gespeicherte Sprache.",
         decodeTitle: "Daten entschlüsseln",
         decodeDesc: "Diese Seite entschlüsselt den QR-Code lokal im Browser. Es werden keine Patientendaten an einen Server gesendet.",
         readyTitle: "Freigabecode eingeben",
@@ -2741,6 +2756,8 @@ const translations = {
         landingSvgTimestamp: "QR timestamp + local decrypt",
         expiryTitle: "Access code valid for 24 hours",
         expiryDesc: "The 24-hour window starts at the timestamp stored in the QR data.",
+        languageNoteTitle: "Language",
+        languageNoteDesc: "The page starts in English by default. You can switch the language manually at the top. After decryption, the QR code's stored language is applied.",
         decodeTitle: "Decrypt data",
         decodeDesc: "This page decrypts the QR code locally in the browser. No patient data is sent to a server.",
         readyTitle: "Enter access code",
@@ -2857,6 +2874,8 @@ const translations = {
         landingSvgTimestamp: "Marca temporal QR + descifrado local",
         expiryTitle: "Código válido durante 24 horas",
         expiryDesc: "La ventana de 24 horas empieza con la marca temporal guardada en los datos QR.",
+        languageNoteTitle: "Idioma",
+        languageNoteDesc: "La página se inicia en inglés de forma predeterminada. Puedes cambiar el idioma manualmente arriba. Después del descifrado se aplica el idioma guardado en el QR.",
         decodeTitle: "Descifrar datos",
         decodeDesc: "Esta página descifra el QR localmente en el navegador. No se envían datos del paciente a un servidor.",
         readyTitle: "Introducir código",
@@ -2973,6 +2992,8 @@ const translations = {
         landingSvgTimestamp: "Horodatage QR + déchiffrement local",
         expiryTitle: "Code valable 24 heures",
         expiryDesc: "La fenêtre de 24 heures commence avec l'horodatage stocké dans les données QR.",
+        languageNoteTitle: "Langue",
+        languageNoteDesc: "La page s'ouvre en anglais par défaut. Vous pouvez changer la langue manuellement en haut. Après le déchiffrement, la langue stockée dans le QR est appliquée.",
         decodeTitle: "Déchiffrer les données",
         decodeDesc: "Cette page déchiffre le QR localement dans le navigateur. Aucune donnée patient n'est envoyée à un serveur.",
         readyTitle: "Saisir le code",
@@ -3089,6 +3110,8 @@ const translations = {
         landingSvgTimestamp: "Timestamp QR + decifragem local",
         expiryTitle: "Código válido por 24 horas",
         expiryDesc: "A janela de 24 horas começa no timestamp guardado nos dados QR.",
+        languageNoteTitle: "Idioma",
+        languageNoteDesc: "A página abre em inglês por padrão. Pode mudar o idioma manualmente no topo. Após a decifragem, é aplicado o idioma guardado no QR.",
         decodeTitle: "Decifrar dados",
         decodeDesc: "Esta página decifra o QR localmente no navegador. Nenhum dado do paciente é enviado para servidor.",
         readyTitle: "Inserir código",
@@ -3186,6 +3209,7 @@ const translations = {
 
 let currentLanguageCode = "en";
 let lang = translations.en;
+let languageSelectionSource = "default";
 const kdfIterations = 150000;
 let decodedPayload = null;
 let chartState = createChartState();
@@ -3309,13 +3333,29 @@ if (window.Chart) {
     Chart.defaults.animation.duration = 650;
 }
 
-function setLanguage(code) {
+function setLanguage(code, source = "code") {
     const normalized = String(code || "en").trim().slice(0, 2).toLowerCase();
     currentLanguageCode = translations[normalized] ? normalized : "en";
     lang = translations[currentLanguageCode];
+    languageSelectionSource = source;
     document.documentElement.lang = currentLanguageCode;
     const languageSelect = document.getElementById("languageSelect");
     if (languageSelect) languageSelect.value = currentLanguageCode;
+    updateLanguageNote();
+}
+
+function languageFromParams(params) {
+    return params.get("lang") || params.get("la") || params.get("locale") || "";
+}
+
+function readLanguageFromURL() {
+    const queryParams = new URLSearchParams(window.location.search);
+    const rawHash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
+    const hashParams = new URLSearchParams(rawHash);
+    const requestedLanguage = languageFromParams(hashParams) || languageFromParams(queryParams);
+    if (!requestedLanguage) return false;
+    setLanguage(requestedLanguage, "url");
+    return true;
 }
 
 function applyTranslations() {
@@ -3342,6 +3382,7 @@ function applyTranslations() {
     setText("ui-landing-svg-timestamp", lang.landingSvgTimestamp);
     setText("ui-decode-title", lang.decodeTitle);
     setText("ui-decode-desc", lang.decodeDesc);
+    updateLanguageNote();
     setText("ui-expiry-title", lang.expiryTitle);
     setText("ui-expiry-desc", lang.expiryDesc);
     setText("ui-scan-title", lang.scanTitle);
@@ -3391,6 +3432,11 @@ function applyTranslations() {
 function setText(id, value) {
     const el = document.getElementById(id);
     if (el) el.textContent = value;
+}
+
+function updateLanguageNote() {
+    setText("ui-language-note-title", lang.languageNoteTitle || translations.en.languageNoteTitle);
+    setText("ui-language-note-desc", lang.languageNoteDesc || translations.en.languageNoteDesc);
 }
 
 function readPayloadFromFragment() {
@@ -3515,7 +3561,8 @@ async function decryptPayload() {
         chartState = createChartState();
         distributionState = { selectedIndex: null, parts: [] };
         tableFilterState = { target: "all", query: "" };
-        setLanguage(decodedPayload.la || decodedPayload.lang || decodedPayload.locale || navigator.language.slice(0, 2));
+        const payloadLanguage = decodedPayload.la || decodedPayload.lang || decodedPayload.locale;
+        if (payloadLanguage) setLanguage(payloadLanguage, "payload");
         applyTranslations();
         if (payloadExpired(decodedPayload)) {
             decodedPayload = null;
@@ -4591,6 +4638,7 @@ function escapeHTML(value) {
 }
 
 function resetViewer() {
+    const shouldResetLanguage = languageSelectionSource !== "manual";
     decodedPayload = null;
     document.body.classList.remove("viewer-open");
     chartState = createChartState();
@@ -4599,7 +4647,9 @@ function resetViewer() {
     if (trendChart) { trendChart.destroy(); trendChart = null; }
     if (distributionChart) { distributionChart.destroy(); distributionChart = null; }
     if (boxPlotChart) { boxPlotChart.destroy(); boxPlotChart = null; }
-    setLanguage("en");
+    if (shouldResetLanguage) {
+        setLanguage("en", "default");
+    }
     applyTranslations();
     document.getElementById("payloadInput").value = "";
     document.getElementById("codeInput").value = "";
@@ -4632,7 +4682,7 @@ function scrollToReportSection(id) {
 
 function wireEvents() {
     document.getElementById("languageSelect").addEventListener("change", event => {
-        setLanguage(event.target.value);
+        setLanguage(event.target.value, "manual");
         applyTranslations();
     });
     document.getElementById("decryptButton").addEventListener("click", decryptPayload);
@@ -4734,6 +4784,7 @@ function wireEvents() {
     });
 }
 
+readLanguageFromURL();
 applyTranslations();
 wireEvents();
 readPayloadFromFragment();
