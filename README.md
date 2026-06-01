@@ -40,7 +40,7 @@ To ensure the highest level of security, the data is encrypted using industry-st
 
 ## ⚖️ Transparency
 
-This project is open-source. We believe in transparency, especially regarding health data. By keeping this repository public, medical professionals and developers can verify that the code performs only the promised functions without any hidden network activity.
+This project is open-source. I believe in transparency, especially regarding health data. By keeping this repository public, medical professionals and developers can verify that the code performs only the promised functions without any hidden network activity.
 
 ---
 *Disclaimer: This tool is intended for medical professionals to view patient-provided data. Please verify patient data with official lab reports if necessary.*
