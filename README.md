@@ -5,12 +5,15 @@ This repository contains the source code for the **INR-Tracker Web Decoder**. Th
 
 ## 🔒 Privacy & Security
 
-The safety of patient data is our top priority. This web application operates on a **strictly local, client-side** basis:
+This web decoder is designed to process INR share data locally in the browser.
 
-- **No Server Processing:** This page does not communicate with any backend server. No medical data is sent, stored, or logged anywhere on the internet.
-- **Local Decryption:** All decryption (AES-GCM) happens directly within the memory (RAM) of your browser.
-- **Time-Limited Access:** Each QR code contains an embedded, encrypted timestamp. During decryption, the web tool validates this timestamp against the current system time. **If the code is older than 24 hours, the tool automatically refuses to decrypt the data.** This security feature works entirely offline and client-side, ensuring that access expires after 24 hours without requiring any server-side database or tracking.
-- **GDPR Compliant:** Since no data leaves the browser, this tool is fully compliant with GDPR/DSGVO standards.
+- **No backend for patient data:** This is a static GitHub Pages viewer. The application code does not send decrypted INR data or patient data to a backend server.
+- **Local decryption:** Decryption is performed in the user's browser using AES-GCM. The access code is used locally to derive the decryption key with PBKDF2/SHA-256.
+- **URL fragment handling:** Encrypted QR data is read from the URL fragment (`#...`) where possible. The viewer removes this fragment from the visible address bar after loading.
+- **Time-limited viewer access:** Each share may contain an encrypted expiry timestamp. The official viewer checks this timestamp after decryption and refuses to display expired data.
+- **Open source transparency:** The source code is public so users, clinicians, and developers can verify how the viewer works.
+
+This project is privacy-focused by design, but it should not be understood as a legal certification or guarantee of GDPR/DSGVO compliance. GDPR compliance depends on the full processing context, including who uses the tool, for what purpose, and under which legal basis.
 
 
 ## 🚀 How to use
