@@ -579,6 +579,75 @@
             margin-bottom: 4px;
         }
 
+        .payload-actions {
+            margin-top: 10px;
+        }
+
+        .qr-scanner {
+            display: grid;
+            gap: 12px;
+            margin-top: 12px;
+            padding: 12px;
+            border: 1px solid rgba(10,132,255,0.28);
+            border-radius: 16px;
+            background: rgba(10,132,255,0.08);
+        }
+
+        .qr-scanner-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .qr-scanner-header button {
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+
+        .decode-card .qr-scanner-header button {
+            width: auto;
+        }
+
+        .qr-camera-frame {
+            position: relative;
+            width: min(100%, 520px);
+            aspect-ratio: 4 / 3;
+            margin-inline: auto;
+            overflow: hidden;
+            border-radius: 16px;
+            background: #000;
+        }
+
+        .qr-camera-frame video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .qr-camera-guide {
+            position: absolute;
+            inset: 50% auto auto 50%;
+            width: min(64%, 260px);
+            aspect-ratio: 1;
+            transform: translate(-50%, -50%);
+            border: 3px solid rgba(255,255,255,0.94);
+            border-radius: 20px;
+            box-shadow: 0 0 0 999px rgba(0,0,0,0.28);
+            pointer-events: none;
+        }
+
+        .qr-scanner-message {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .qr-scanner-message.error {
+            color: var(--red);
+        }
+
         .metrics {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2449,6 +2518,20 @@
             <div id="payloadField">
                 <label for="payloadInput" id="ui-payload-label">QR data</label>
                 <textarea id="payloadInput" autocomplete="off" spellcheck="false"></textarea>
+                <div class="row payload-actions">
+                    <button class="secondary" id="scanQrButton" type="button">Scan QR code with camera</button>
+                </div>
+                <div id="qrScanner" class="qr-scanner hidden">
+                    <div class="qr-scanner-header">
+                        <strong id="ui-scanner-title">Scan QR code</strong>
+                        <button class="secondary" id="closeScannerButton" type="button">Cancel</button>
+                    </div>
+                    <div class="qr-camera-frame">
+                        <video id="qrVideo" autoplay muted playsinline></video>
+                        <div class="qr-camera-guide" aria-hidden="true"></div>
+                    </div>
+                    <div id="qrScannerMessage" class="qr-scanner-message" role="status" aria-live="polite">Point the camera at the QR code.</div>
+                </div>
             </div>
             <div>
                 <label for="codeInput" id="ui-code-label">Access code</label>
@@ -2646,6 +2729,15 @@ const translations = {
         readyDesc: "Der QR-Code wurde erkannt. Danach erscheinen die INR-Daten direkt auf dieser Seite.",
         scanTitle: "QR-Code erkannt",
         scanDesc: "Bitte Freigabecode eingeben. Die Daten werden nur lokal im Browser entschlüsselt.",
+        scanButton: "QR-Code mit Kamera scannen",
+        scannerTitle: "QR-Code scannen",
+        scannerClose: "Abbrechen",
+        scannerHint: "Kamera auf den QR-Code richten. Der Scan wird nur auf diesem Gerät verarbeitet.",
+        scannerStarting: "Kamera wird gestartet...",
+        scannerFound: "QR-Code erkannt. Bitte Freigabecode eingeben.",
+        scannerPermission: "Die Kamera konnte nicht geöffnet werden. Bitte Kamerazugriff erlauben und die Seite über HTTPS öffnen.",
+        scannerUnsupported: "Dieser Browser unterstützt den Kamerascan nicht. Bitte QR-Daten einfügen oder einen aktuellen Browser verwenden.",
+        scannerInvalid: "Kein gültiger INR-Tracker-QR-Code erkannt.",
         payloadLabel: "QR-Daten",
         payloadPlaceholder: "QR-Code scannen oder verschlüsselten Text einfügen",
         codeLabel: "Freigabecode",
@@ -2764,6 +2856,15 @@ const translations = {
         readyDesc: "The QR code was detected. The INR data will then appear directly on this page.",
         scanTitle: "QR code detected",
         scanDesc: "Please enter the access code. The data is decrypted locally in the browser only.",
+        scanButton: "Scan QR code with camera",
+        scannerTitle: "Scan QR code",
+        scannerClose: "Cancel",
+        scannerHint: "Point the camera at the QR code. The scan is processed only on this device.",
+        scannerStarting: "Starting camera...",
+        scannerFound: "QR code detected. Please enter the access code.",
+        scannerPermission: "The camera could not be opened. Please allow camera access and open the page over HTTPS.",
+        scannerUnsupported: "This browser does not support camera scanning. Please paste the QR data or use a current browser.",
+        scannerInvalid: "No valid INR Tracker QR code detected.",
         payloadLabel: "QR data",
         payloadPlaceholder: "Scan QR code or paste encrypted text",
         codeLabel: "Access code",
@@ -2882,6 +2983,15 @@ const translations = {
         readyDesc: "Se detectó el QR. Después los datos INR aparecen directamente en esta página.",
         scanTitle: "QR detectado",
         scanDesc: "Introduce el código de acceso. Los datos se descifran solo localmente en el navegador.",
+        scanButton: "Escanear QR con la cámara",
+        scannerTitle: "Escanear código QR",
+        scannerClose: "Cancelar",
+        scannerHint: "Apunta la cámara al código QR. El escaneo se procesa solo en este dispositivo.",
+        scannerStarting: "Iniciando cámara...",
+        scannerFound: "Código QR detectado. Introduce el código de acceso.",
+        scannerPermission: "No se pudo abrir la cámara. Permite el acceso y abre la página mediante HTTPS.",
+        scannerUnsupported: "Este navegador no admite el escaneo con cámara. Pega los datos QR o utiliza un navegador actual.",
+        scannerInvalid: "No se detectó un código QR válido de INR Tracker.",
         payloadLabel: "Datos QR",
         payloadPlaceholder: "Escanear QR o pegar texto cifrado",
         codeLabel: "Código de acceso",
@@ -3000,6 +3110,15 @@ const translations = {
         readyDesc: "Le QR a été détecté. Les données INR s'afficheront ensuite directement sur cette page.",
         scanTitle: "QR détecté",
         scanDesc: "Saisir le code d'accès. Les données sont déchiffrées uniquement localement dans le navigateur.",
+        scanButton: "Scanner le QR avec la caméra",
+        scannerTitle: "Scanner le code QR",
+        scannerClose: "Annuler",
+        scannerHint: "Pointez la caméra vers le code QR. Le scan est traité uniquement sur cet appareil.",
+        scannerStarting: "Démarrage de la caméra...",
+        scannerFound: "Code QR détecté. Saisissez le code d'accès.",
+        scannerPermission: "Impossible d'ouvrir la caméra. Autorisez son accès et ouvrez la page via HTTPS.",
+        scannerUnsupported: "Ce navigateur ne prend pas en charge le scan par caméra. Collez les données QR ou utilisez un navigateur récent.",
+        scannerInvalid: "Aucun code QR INR Tracker valide détecté.",
         payloadLabel: "Données QR",
         payloadPlaceholder: "Scanner le QR ou coller le texte chiffré",
         codeLabel: "Code d'accès",
@@ -3118,6 +3237,15 @@ const translations = {
         readyDesc: "O QR foi detectado. Depois os dados INR aparecem diretamente nesta página.",
         scanTitle: "QR detectado",
         scanDesc: "Insira o código de acesso. Os dados são decifrados apenas localmente no navegador.",
+        scanButton: "Ler QR com a câmara",
+        scannerTitle: "Ler código QR",
+        scannerClose: "Cancelar",
+        scannerHint: "Aponte a câmara para o código QR. A leitura é processada apenas neste dispositivo.",
+        scannerStarting: "A iniciar a câmara...",
+        scannerFound: "Código QR detetado. Insira o código de acesso.",
+        scannerPermission: "Não foi possível abrir a câmara. Permita o acesso e abra a página através de HTTPS.",
+        scannerUnsupported: "Este navegador não suporta leitura pela câmara. Cole os dados QR ou utilize um navegador atual.",
+        scannerInvalid: "Não foi detetado um código QR válido do INR Tracker.",
         payloadLabel: "Dados QR",
         payloadPlaceholder: "Escanear QR ou colar texto cifrado",
         codeLabel: "Código de acesso",
@@ -3218,6 +3346,17 @@ let tableFilterState = { target: "all", query: "" };
 let trendChart = null;
 let distributionChart = null;
 let boxPlotChart = null;
+let qrStream = null;
+let qrDetector = null;
+let qrScanFrame = null;
+let qrScanBusy = false;
+let qrLastScanAt = 0;
+let qrCanvas = null;
+let qrCanvasContext = null;
+let jsQrLoader = null;
+
+const jsQrFallbackURL = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
+const jsQrFallbackIntegrity = "sha384-b5Ya4Bq3qCyz39m2ISh+4DxjAIljdeFwK/BsXLuj9gugaNwAcj/ia15fxNZL9Nlx";
 
 function createChartState() {
     return {
@@ -3387,6 +3526,10 @@ function applyTranslations() {
     setText("ui-expiry-desc", lang.expiryDesc);
     setText("ui-scan-title", lang.scanTitle);
     setText("ui-scan-desc", lang.scanDesc);
+    setText("scanQrButton", lang.scanButton);
+    setText("ui-scanner-title", lang.scannerTitle);
+    setText("closeScannerButton", lang.scannerClose);
+    if (!qrStream) setQrScannerMessage(lang.scannerHint);
     setText("ui-payload-label", lang.payloadLabel);
     setText("ui-code-label", lang.codeLabel);
     setText("decryptButton", lang.button);
@@ -3439,19 +3582,23 @@ function updateLanguageNote() {
     setText("ui-language-note-desc", lang.languageNoteDesc || translations.en.languageNoteDesc);
 }
 
+function showPayloadReady(payload) {
+    document.getElementById("payloadInput").value = payload;
+    document.getElementById("payloadField").classList.add("hidden");
+    document.getElementById("scanNotice").classList.remove("hidden");
+    document.getElementById("landingInfo").classList.add("hidden");
+    setText("ui-decode-title", lang.readyTitle);
+    setText("ui-decode-desc", lang.readyDesc);
+    document.getElementById("codeInput").focus();
+}
+
 function readPayloadFromFragment() {
     const raw = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
     const params = new URLSearchParams(raw);
     const payload = params.get("p") || params.get("payload") || "";
     if (payload) {
-        document.getElementById("payloadInput").value = payload;
-        document.getElementById("payloadField").classList.add("hidden");
-        document.getElementById("scanNotice").classList.remove("hidden");
-        document.getElementById("landingInfo").classList.add("hidden");
-        setText("ui-decode-title", lang.readyTitle);
-        setText("ui-decode-desc", lang.readyDesc);
+        showPayloadReady(payload);
         history.replaceState(null, "", window.location.pathname + window.location.search);
-        document.getElementById("codeInput").focus();
     }
 }
 
@@ -3487,6 +3634,173 @@ function extractPayload(value) {
 
 function normalizeCode(value) {
     return (value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function isValidInrPayload(payload) {
+    try {
+        const packed = base64URLToBytes(payload);
+        return packed.length >= 48 && new TextDecoder().decode(packed.slice(0, 4)) === "INR1";
+    } catch (_) {
+        return false;
+    }
+}
+
+function setQrScannerMessage(message, type = "") {
+    const element = document.getElementById("qrScannerMessage");
+    if (!element) return;
+    element.textContent = message;
+    element.classList.toggle("error", type === "error");
+}
+
+function loadJsQrFallback() {
+    if (typeof window.jsQR === "function") return Promise.resolve();
+    if (jsQrLoader) return jsQrLoader;
+
+    jsQrLoader = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = jsQrFallbackURL;
+        script.integrity = jsQrFallbackIntegrity;
+        script.crossOrigin = "anonymous";
+        script.referrerPolicy = "no-referrer";
+        script.onload = () => typeof window.jsQR === "function"
+            ? resolve()
+            : reject(new Error("QR fallback unavailable"));
+        script.onerror = () => reject(new Error("QR fallback unavailable"));
+        document.head.appendChild(script);
+    });
+
+    return jsQrLoader;
+}
+
+async function createQrDetector() {
+    if ("BarcodeDetector" in window) {
+        try {
+            const formats = typeof BarcodeDetector.getSupportedFormats === "function"
+                ? await BarcodeDetector.getSupportedFormats()
+                : ["qr_code"];
+            if (formats.includes("qr_code")) {
+                return new BarcodeDetector({ formats: ["qr_code"] });
+            }
+        } catch (_) {
+            // Use the local canvas fallback below.
+        }
+    }
+
+    await loadJsQrFallback();
+    return null;
+}
+
+async function detectQrCode(video) {
+    if (qrDetector) {
+        const results = await qrDetector.detect(video);
+        return results[0]?.rawValue || "";
+    }
+
+    const sourceWidth = video.videoWidth;
+    const sourceHeight = video.videoHeight;
+    if (!sourceWidth || !sourceHeight || typeof window.jsQR !== "function") return "";
+
+    const width = Math.min(sourceWidth, 720);
+    const height = Math.round(sourceHeight * (width / sourceWidth));
+    if (!qrCanvas) {
+        qrCanvas = document.createElement("canvas");
+        qrCanvasContext = qrCanvas.getContext("2d", { willReadFrequently: true });
+    }
+    qrCanvas.width = width;
+    qrCanvas.height = height;
+    qrCanvasContext.drawImage(video, 0, 0, width, height);
+    const image = qrCanvasContext.getImageData(0, 0, width, height);
+    return window.jsQR(image.data, width, height, { inversionAttempts: "dontInvert" })?.data || "";
+}
+
+function acceptScannedQr(rawValue) {
+    const payload = extractPayload(rawValue);
+    if (!isValidInrPayload(payload)) {
+        setQrScannerMessage(lang.scannerInvalid, "error");
+        return false;
+    }
+
+    stopQrScanner();
+    showPayloadReady(payload);
+    showStatus(lang.scannerFound, "ok");
+    return true;
+}
+
+async function scanQrVideoFrame(timestamp) {
+    if (!qrStream) return;
+
+    if (!qrScanBusy && timestamp - qrLastScanAt >= 120) {
+        qrScanBusy = true;
+        qrLastScanAt = timestamp;
+        try {
+            const rawValue = await detectQrCode(document.getElementById("qrVideo"));
+            if (rawValue && acceptScannedQr(rawValue)) return;
+        } catch (error) {
+            console.error(error);
+        } finally {
+            qrScanBusy = false;
+        }
+    }
+
+    if (qrStream) qrScanFrame = requestAnimationFrame(scanQrVideoFrame);
+}
+
+async function startQrScanner() {
+    if (!navigator.mediaDevices?.getUserMedia) {
+        showStatus(lang.scannerUnsupported, "error");
+        return;
+    }
+
+    stopQrScanner();
+    document.getElementById("qrScanner").classList.remove("hidden");
+    document.getElementById("scanQrButton").disabled = true;
+    setQrScannerMessage(lang.scannerStarting);
+    showStatus("", "");
+
+    try {
+        qrStream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {
+                facingMode: { ideal: "environment" },
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
+        });
+        const video = document.getElementById("qrVideo");
+        video.srcObject = qrStream;
+        await video.play();
+    } catch (error) {
+        console.error(error);
+        stopQrScanner();
+        showStatus(lang.scannerPermission, "error");
+        return;
+    }
+
+    try {
+        qrDetector = await createQrDetector();
+        setQrScannerMessage(lang.scannerHint);
+        qrScanFrame = requestAnimationFrame(scanQrVideoFrame);
+    } catch (error) {
+        console.error(error);
+        stopQrScanner();
+        showStatus(lang.scannerUnsupported, "error");
+    }
+}
+
+function stopQrScanner() {
+    if (qrScanFrame != null) cancelAnimationFrame(qrScanFrame);
+    qrScanFrame = null;
+    qrScanBusy = false;
+    qrLastScanAt = 0;
+    qrDetector = null;
+    if (qrStream) qrStream.getTracks().forEach(track => track.stop());
+    qrStream = null;
+    const video = document.getElementById("qrVideo");
+    if (video) video.srcObject = null;
+    document.getElementById("qrScanner")?.classList.add("hidden");
+    const scanButton = document.getElementById("scanQrButton");
+    if (scanButton) scanButton.disabled = false;
+    setQrScannerMessage(lang.scannerHint);
 }
 
 function base64URLToBytes(value) {
@@ -4639,6 +4953,7 @@ function escapeHTML(value) {
 
 function resetViewer() {
     const shouldResetLanguage = languageSelectionSource !== "manual";
+    stopQrScanner();
     decodedPayload = null;
     document.body.classList.remove("viewer-open");
     chartState = createChartState();
@@ -4685,6 +5000,8 @@ function wireEvents() {
         setLanguage(event.target.value, "manual");
         applyTranslations();
     });
+    document.getElementById("scanQrButton").addEventListener("click", startQrScanner);
+    document.getElementById("closeScannerButton").addEventListener("click", stopQrScanner);
     document.getElementById("decryptButton").addEventListener("click", decryptPayload);
     document.getElementById("codeInput").addEventListener("keydown", event => {
         if (event.key === "Enter") decryptPayload();
@@ -4782,6 +5099,10 @@ function wireEvents() {
         if (!row) return;
         selectChartEntry(Number(row.dataset.entryIndex));
     });
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stopQrScanner();
+    });
+    window.addEventListener("pagehide", stopQrScanner);
 }
 
 readLanguageFromURL();
