@@ -2732,7 +2732,7 @@ const translations = {
         scanButton: "QR-Code mit Kamera scannen",
         scannerTitle: "QR-Code scannen",
         scannerClose: "Abbrechen",
-        scannerHint: "Kamera auf den QR-Code richten. Der Scan wird nur auf diesem Gerät verarbeitet.",
+        scannerHint: "QR-Code möglichst groß und ruhig im Rahmen halten. Dichte QR-Codes können einen Moment benötigen. Der Scan bleibt auf diesem Gerät.",
         scannerStarting: "Kamera wird gestartet...",
         scannerFound: "QR-Code erkannt. Bitte Freigabecode eingeben.",
         scannerPermission: "Die Kamera konnte nicht geöffnet werden. Bitte Kamerazugriff erlauben und die Seite über HTTPS öffnen.",
@@ -2859,7 +2859,7 @@ const translations = {
         scanButton: "Scan QR code with camera",
         scannerTitle: "Scan QR code",
         scannerClose: "Cancel",
-        scannerHint: "Point the camera at the QR code. The scan is processed only on this device.",
+        scannerHint: "Hold the QR code large and steady inside the frame. Dense QR codes may take a moment. The scan stays on this device.",
         scannerStarting: "Starting camera...",
         scannerFound: "QR code detected. Please enter the access code.",
         scannerPermission: "The camera could not be opened. Please allow camera access and open the page over HTTPS.",
@@ -2986,7 +2986,7 @@ const translations = {
         scanButton: "Escanear QR con la cámara",
         scannerTitle: "Escanear código QR",
         scannerClose: "Cancelar",
-        scannerHint: "Apunta la cámara al código QR. El escaneo se procesa solo en este dispositivo.",
+        scannerHint: "Mantén el código QR grande y estable dentro del marco. Los códigos densos pueden tardar un momento. El escaneo permanece en este dispositivo.",
         scannerStarting: "Iniciando cámara...",
         scannerFound: "Código QR detectado. Introduce el código de acceso.",
         scannerPermission: "No se pudo abrir la cámara. Permite el acceso y abre la página mediante HTTPS.",
@@ -3113,7 +3113,7 @@ const translations = {
         scanButton: "Scanner le QR avec la caméra",
         scannerTitle: "Scanner le code QR",
         scannerClose: "Annuler",
-        scannerHint: "Pointez la caméra vers le code QR. Le scan est traité uniquement sur cet appareil.",
+        scannerHint: "Maintenez le code QR grand et stable dans le cadre. Les QR denses peuvent prendre un moment. Le scan reste sur cet appareil.",
         scannerStarting: "Démarrage de la caméra...",
         scannerFound: "Code QR détecté. Saisissez le code d'accès.",
         scannerPermission: "Impossible d'ouvrir la caméra. Autorisez son accès et ouvrez la page via HTTPS.",
@@ -3240,7 +3240,7 @@ const translations = {
         scanButton: "Ler QR com a câmara",
         scannerTitle: "Ler código QR",
         scannerClose: "Cancelar",
-        scannerHint: "Aponte a câmara para o código QR. A leitura é processada apenas neste dispositivo.",
+        scannerHint: "Mantenha o código QR grande e estável dentro da moldura. Códigos densos podem demorar um momento. A leitura fica neste dispositivo.",
         scannerStarting: "A iniciar a câmara...",
         scannerFound: "Código QR detetado. Insira o código de acesso.",
         scannerPermission: "Não foi possível abrir a câmara. Permita o acesso e abra a página através de HTTPS.",
@@ -3354,6 +3354,7 @@ let qrLastScanAt = 0;
 let qrCanvas = null;
 let qrCanvasContext = null;
 let jsQrLoader = null;
+let qrFallbackAttempt = 0;
 
 const jsQrFallbackURL = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
 const jsQrFallbackIntegrity = "sha384-b5Ya4Bq3qCyz39m2ISh+4DxjAIljdeFwK/BsXLuj9gugaNwAcj/ia15fxNZL9Nlx";
@@ -3700,17 +3701,36 @@ async function detectQrCode(video) {
     const sourceHeight = video.videoHeight;
     if (!sourceWidth || !sourceHeight || typeof window.jsQR !== "function") return "";
 
-    const width = Math.min(sourceWidth, 720);
-    const height = Math.round(sourceHeight * (width / sourceWidth));
     if (!qrCanvas) {
         qrCanvas = document.createElement("canvas");
         qrCanvasContext = qrCanvas.getContext("2d", { willReadFrequently: true });
     }
+
+    // Alternate between the full frame and a detailed center crop. Dense QR codes
+    // need substantially more pixels per module than short, simple codes.
+    const useCenterCrop = qrFallbackAttempt++ % 2 === 1;
+    const cropSize = useCenterCrop ? Math.round(Math.min(sourceWidth, sourceHeight) * 0.86) : null;
+    const sourceX = cropSize ? Math.round((sourceWidth - cropSize) / 2) : 0;
+    const sourceY = cropSize ? Math.round((sourceHeight - cropSize) / 2) : 0;
+    const sourceCropWidth = cropSize || sourceWidth;
+    const sourceCropHeight = cropSize || sourceHeight;
+    const width = Math.min(sourceCropWidth, useCenterCrop ? 1600 : 1280);
+    const height = Math.round(sourceCropHeight * (width / sourceCropWidth));
     qrCanvas.width = width;
     qrCanvas.height = height;
-    qrCanvasContext.drawImage(video, 0, 0, width, height);
+    qrCanvasContext.drawImage(
+        video,
+        sourceX,
+        sourceY,
+        sourceCropWidth,
+        sourceCropHeight,
+        0,
+        0,
+        width,
+        height
+    );
     const image = qrCanvasContext.getImageData(0, 0, width, height);
-    return window.jsQR(image.data, width, height, { inversionAttempts: "dontInvert" })?.data || "";
+    return window.jsQR(image.data, width, height, { inversionAttempts: "attemptBoth" })?.data || "";
 }
 
 function acceptScannedQr(rawValue) {
@@ -3762,8 +3782,8 @@ async function startQrScanner() {
             audio: false,
             video: {
                 facingMode: { ideal: "environment" },
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
+                width: { ideal: 2560 },
+                height: { ideal: 1440 }
             }
         });
         const video = document.getElementById("qrVideo");
@@ -3792,6 +3812,7 @@ function stopQrScanner() {
     qrScanFrame = null;
     qrScanBusy = false;
     qrLastScanAt = 0;
+    qrFallbackAttempt = 0;
     qrDetector = null;
     if (qrStream) qrStream.getTracks().forEach(track => track.stop());
     qrStream = null;
