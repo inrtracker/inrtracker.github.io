@@ -78,6 +78,7 @@
         .language-control {
             display: inline-flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 8px;
             min-height: 38px;
             padding: 7px 8px 7px 12px;
@@ -87,11 +88,12 @@
             color: var(--muted);
             font-size: 13px;
             font-weight: 750;
-            white-space: nowrap;
+            overflow-wrap: anywhere;
         }
 
         .language-control select {
             min-width: 112px;
+            max-width: 100%;
             border: 0;
             outline: 0;
             background: transparent;
@@ -299,7 +301,8 @@
             color: #ffffff;
             background: rgba(255,255,255,0.12);
             border-color: rgba(255,255,255,0.18);
-            white-space: nowrap;
+            white-space: normal;
+            overflow-wrap: anywhere;
         }
 
         .report .card {
@@ -2418,6 +2421,11 @@
                     <option value="fr">Français</option>
                     <option value="es">Español</option>
                     <option value="pt">Português</option>
+                    <option value="it">Italiano</option>
+                    <option value="nl">Nederlands</option>
+                    <option value="pl">Polski</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="zh-Hant">繁體中文</option>
                 </select>
             </label>
         </div>
@@ -2696,6 +2704,7 @@
 //# sourceMappingURL=chart.umd.min.js.map
 
 </script>
+<script src="additional-translations.js"></script>
 <script>
 const translations = {
     de: {
@@ -3335,6 +3344,8 @@ const translations = {
     }
 };
 
+Object.assign(translations, window.additionalTranslations || {});
+
 let currentLanguageCode = "en";
 let lang = translations.en;
 let languageSelectionSource = "default";
@@ -3473,8 +3484,17 @@ if (window.Chart) {
     Chart.defaults.animation.duration = 650;
 }
 
+function normalizeLanguageCode(code) {
+    const normalized = String(code || "en").trim().replaceAll("_", "-").toLowerCase();
+    if (normalized.startsWith("zh-hant") || normalized.startsWith("zh-tw")) return "zh-Hant";
+    for (const supported of ["de", "en", "es", "fr", "pt", "it", "nl", "pl", "tr"]) {
+        if (normalized.startsWith(supported)) return supported;
+    }
+    return "en";
+}
+
 function setLanguage(code, source = "code") {
-    const normalized = String(code || "en").trim().slice(0, 2).toLowerCase();
+    const normalized = normalizeLanguageCode(code);
     currentLanguageCode = translations[normalized] ? normalized : "en";
     lang = translations[currentLanguageCode];
     languageSelectionSource = source;
